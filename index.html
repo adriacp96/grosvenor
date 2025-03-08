@@ -2,19 +2,31 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Essential meta tags for iOS web app -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>Cuenta Regresiva Autobús</title>
+    <!-- Optional: Add an icon for the home screen -->
+    <link rel="apple-touch-icon" href="https://example.com/icon.png"> <!-- Replace with your icon URL -->
+    <!-- Optional: Startup image -->
+    <link rel="apple-touch-startup-image" href="https://example.com/splash.png"> <!-- Replace with your splash URL -->
     <style>
+        /* Adjust body for full-screen */
+        html, body {
+            height: 100%;
+            width: 100%;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
         body {
             font-family: Helvetica, Arial, sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
-            margin: 0;
             transition: background 1s ease;
             position: relative;
-            overflow: hidden;
         }
         .emirates-logo {
             position: fixed;
@@ -93,7 +105,7 @@
             font-size: 40px;
             z-index: 2;
             transition: left 0.1s linear, bottom 0.1s linear;
-            transform: scaleX(1); /* Default facing right */
+            transform: scaleX(1);
         }
     </style>
 </head>
@@ -118,15 +130,14 @@
     <div id="camel">🐫</div>
 
     <script>
-        let dunePoints = []; // Almacenar puntos de control de la duna
+        let dunePoints = [];
 
-        // Generar duna aleatoria
         function generateRandomDune() {
             const segments = 4;
             const width = 1000;
             const segmentWidth = width / segments;
             let path = "M0,250";
-            dunePoints = [{ x: 0, y: 250 }]; // Punto inicial
+            dunePoints = [{ x: 0, y: 250 }];
 
             for (let i = 1; i <= segments; i++) {
                 const x1 = (i - 0.66) * segmentWidth;
@@ -144,14 +155,12 @@
             document.getElementById("dunePath").setAttribute("d", path);
         }
 
-        // Interpolación cúbica de Bézier para encontrar la altura en una posición x
         function getBezierY(t, p0, p1, p2, p3) {
             const mt = 1 - t;
             return Math.pow(mt, 3) * p0.y + 3 * Math.pow(mt, 2) * t * p1.y + 
                    3 * mt * Math.pow(t, 2) * p2.y + Math.pow(t, 3) * p3.y;
         }
 
-        // Encontrar la altura de la duna en una posición x
         function getDuneHeight(x) {
             for (let i = 0; i < dunePoints.length - 3; i += 3) {
                 const p0 = dunePoints[i];
@@ -163,28 +172,21 @@
                     return getBezierY(t, p0, p1, p2, p3);
                 }
             }
-            return 250; // Valor por defecto si x está fuera de rango
+            return 250;
         }
 
-        // Actualizar posición del camello
         let camelX = 1000;
         function updateCamel() {
             const camel = document.getElementById("camel");
-            const svgHeight = 25; // Altura del SVG en vh
+            const svgHeight = 25;
             const y = getDuneHeight(camelX);
-            const bottom = (250 - y) / 250 * svgHeight; // Base calculation
-            
-            // Adjust to touch dunes but not too low
-            const camelHeightAdjustment = 0; // Base adjustment
-            const fontSizeInVh = 40 / window.innerHeight * 100; // Convert 40px to vh
-            const baselineOffset = fontSizeInVh * 0.4; // Kept at 0.4
+            const bottom = (250 - y) / 250 * svgHeight;
+            const fontSizeInVh = 40 / window.innerHeight * 100;
+            const baselineOffset = fontSizeInVh * 0.4;
             camel.style.left = `${camelX / 1000 * 100}vw`;
-            camel.style.bottom = `${bottom - baselineOffset + camelHeightAdjustment}vh`;
-            
-            // Face right (flipped from previous left-facing)
+            camel.style.bottom = `${bottom - baselineOffset}vh`;
             camel.style.transform = "scaleX(1)";
-            
-            camelX -= 1; // Mover de derecha a izquierda
+            camelX -= 1;
             if (camelX < 0) camelX = 1000;
         }
 
@@ -199,7 +201,6 @@
         function getBusTimes() {
             const now = new Date();
             const currentTimeInMinutes = now.getHours() * 60 + now.getMinutes() + (now.getSeconds() + now.getMilliseconds() / 1000) / 60;
-            
             let previousBus = { time: busSchedule[busSchedule.length - 1], minutes: 0 };
             let nextBus = { time: busSchedule[0], minutes: 0 };
 
@@ -285,7 +286,6 @@
         function updateCountdown() {
             const now = new Date();
             const currentTimeInMinutes = now.getHours() * 60 + now.getMinutes() + (now.getSeconds() + now.getMilliseconds() / 1000) / 60;
-            
             const { previousBus, nextBus } = getBusTimes();
             let timeDifference = nextBus.minutes - currentTimeInMinutes;
 
@@ -320,7 +320,10 @@
 
         window.onload = function() {
             generateRandomDune();
-            updateCamel(); // Set initial position and direction
+            updateCamel();
+            // Ensure full-screen on iOS
+            document.body.style.height = window.innerHeight + 'px';
+            window.scrollTo(0, 0);
         };
 
         setInterval(updateCountdown, 100);
