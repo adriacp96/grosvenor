@@ -2,24 +2,25 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <!-- Ajuste del viewport para cubrir toda la pantalla, incluyendo el notch -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <!-- Fondo negro sólido para la barra de estado -->
-    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <!-- Usar un color que coincida con el gradiente superior para evitar la línea blanca -->
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <title>Grosvenor</title>
     <link rel="apple-touch-icon" href="https://img.icons8.com/?size=100&id=fRKgJhBjMqCd&format=png&color=000000">
     <link rel="apple-touch-startup-image" href="https://example.com/splash.png">
     <style>
         html, body {
-            height: 100vh; /* Usar vh para cubrir toda la altura de la pantalla */
-            width: 100vw; /* Usar vw para cubrir todo el ancho */
+            height: 100vh;
+            width: 100vw;
             margin: 0;
             padding: 0;
-            overflow: hidden; /* Evitar desplazamiento */
-            position: fixed; /* Fijar el cuerpo para que no se desplace */
+            overflow: hidden;
+            position: fixed;
             top: 0;
             left: 0;
+            /* Fondo base sólido para evitar espacios blancos */
+            background: #191970; /* Color oscuro como respaldo, ajustado al gradiente nocturno */
         }
         body {
             font-family: Helvetica, Arial, sans-serif;
@@ -28,10 +29,8 @@
             align-items: center;
             transition: background 1s ease;
             position: relative;
-            /* Asegurar que el fondo cubra todo */
             background-size: cover;
             background-position: center;
-            /* Soporte para áreas seguras en iOS */
             padding-top: env(safe-area-inset-top);
             padding-bottom: env(safe-area-inset-bottom);
         }
@@ -55,7 +54,7 @@
             padding: 20px;
             border-radius: 10px;
             box-shadow: 0 0 10px rgba(0,0,0,0.3);
-            z-index: 2;
+            z-index: 2; /* Mantener en 2 */
             position: relative;
         }
         #countdown {
@@ -99,7 +98,7 @@
             font-size: 60px;
             position: absolute;
             transition: all 1s ease;
-            z-index: 3; /* Por encima del contenedor */
+            z-index: 1; /* Cambiado a 1 para estar detrás de .container */
             opacity: 1;
             pointer-events: none;
         }
@@ -125,19 +124,18 @@
         #toggleRoute:hover {
             transform: rotate(180deg);
         }
-        /* Estilos para las estrellas */
         .stars-container {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
-            height: 75vh; /* Limitar a la parte superior, dejando las dunas libres */
-            z-index: 0; /* Por debajo de las dunas */
+            height: 75vh;
+            z-index: 0;
             pointer-events: none;
         }
         .star {
             position: absolute;
-            background-color: rgba(255, 255, 255, 0.3); /* Baja opacidad */
+            background-color: rgba(255, 255, 255, 0.3);
             border-radius: 50%;
             animation: fade 3s infinite;
         }
@@ -167,7 +165,7 @@
     <svg class="dunes" viewBox="0 0 1000 250" preserveAspectRatio="none">
         <path id="dunePath" fill="rgba(237, 201, 175, 0.4)" />
     </svg>
-    <div class="stars-container" id="starsContainer"></div> <!-- Contenedor para las estrellas -->
+    <div class="stars-container" id="starsContainer"></div>
 
     <script>
         let dunePoints = [];
@@ -274,7 +272,6 @@
             const celestial = document.getElementById('celestialBody');
             let gradient;
 
-            // Determinar si es sol o luna y el fondo
             if (hours >= 5 && hours < 7) {
                 gradient = 'linear-gradient(to bottom, #ff8c5a, #ffd700)';
                 celestial.textContent = '☀️';
@@ -290,10 +287,9 @@
             }
             document.body.style.background = gradient;
 
-            // Calcular progreso del día/noche
             let progress;
-            const sunrise = 6.5 * 60;  // 6:30 AM
-            const sunset = 18.5 * 60;  // 6:30 PM
+            const sunrise = 6.5 * 60;
+            const sunset = 18.5 * 60;
             const dayLength = sunset - sunrise;
             const nightLength = 1440 - dayLength;
 
@@ -305,45 +301,37 @@
             }
             progress = Math.max(0, Math.min(1, progress));
 
-            // Obtener dimensiones y posición del contenedor
             const container = document.querySelector('.container');
             const containerRect = container.getBoundingClientRect();
-            const containerWidth = containerRect.width / window.innerWidth * 100; // En vw
-            const containerHeight = containerRect.height / window.innerHeight * 100; // En vh
-            const containerLeft = containerRect.left / window.innerWidth * 100; // En vw
-            const containerTop = containerRect.top / window.innerHeight * 100; // En vh
+            const containerWidth = containerRect.width / window.innerWidth * 100;
+            const containerHeight = containerRect.height / window.innerHeight * 100;
+            const containerLeft = containerRect.left / window.innerWidth * 100;
+            const containerTop = containerRect.top / window.innerHeight * 100;
             const containerRight = containerLeft + containerWidth;
             const containerBottom = containerTop + containerHeight;
 
-            // Definir puntos clave de la trayectoria
-            const buffer = 5; // Margen alrededor del contenedor
-            const startX = 0; // Abajo a la izquierda de la pantalla
+            const buffer = 5;
+            const startX = 0;
             const startY = 100;
-            const endX = 100; // Abajo a la derecha de la pantalla
+            const endX = 100;
             const endY = 100;
-            const peakX = 50; // Centro horizontal de la pantalla
-            const peakY = containerTop - buffer - 10; // Por encima del contenedor
+            const peakX = 50;
+            const peakY = containerTop - buffer - 10;
 
-            // Ajustar la trayectoria para evitar el contenedor
             let leftPosition, topPosition;
             const t = progress;
 
-            // Posición horizontal: lineal de 0 a 100vw
             leftPosition = startX + (endX - startX) * t;
 
-            // Ajustar la posición vertical para rodear el contenedor
             if (leftPosition < containerLeft - buffer) {
-                // Antes del contenedor: parábola desde startY hasta cerca del contenedor
                 const localT = leftPosition / (containerLeft - buffer);
                 topPosition = startY - (startY - (containerBottom + buffer)) * (1 - Math.pow(1 - localT, 2));
             } else if (leftPosition > containerRight + buffer) {
-                // Después del contenedor: parábola desde cerca del contenedor hasta endY
                 const localT = (leftPosition - (containerRight + buffer)) / (endX - (containerRight + buffer));
                 topPosition = (containerBottom + buffer) + (endY - (containerBottom + buffer)) * (1 - Math.pow(1 - localT, 2));
             } else {
-                // Sobre el contenedor: mantenerse por encima con una parábola suave
                 const localT = (leftPosition - (containerLeft - buffer)) / (containerRight + buffer - (containerLeft - buffer));
-                const heightAbove = containerTop - buffer - 10; // Punto más alto
+                const heightAbove = containerTop - buffer - 10;
                 topPosition = containerBottom + buffer - (containerBottom + buffer - heightAbove) * (1 - Math.pow(1 - 2 * localT, 2));
             }
 
@@ -397,27 +385,24 @@
             updateSkyAndCelestial();
         }
 
-        // Función para generar estrellas
         function createStars() {
             const starsContainer = document.getElementById('starsContainer');
-            const numberOfStars = 50; // Ajusta la cantidad de estrellas
+            const numberOfStars = 50;
 
             for (let i = 0; i < numberOfStars; i++) {
                 const star = document.createElement('div');
                 star.className = 'star';
 
-                // Posición aleatoria
-                const x = Math.random() * 100; // 0% a 100% del ancho
-                const y = Math.random() * 75; // 0% a 75% de la altura (por encima de las dunas)
-                const size = Math.random() * 3 + 1; // Tamaño entre 1px y 4px
+                const x = Math.random() * 100;
+                const y = Math.random() * 75;
+                const size = Math.random() * 3 + 1;
 
                 star.style.left = `${x}vw`;
                 star.style.top = `${y}vh`;
                 star.style.width = `${size}px`;
                 star.style.height = `${size}px`;
 
-                // Retardo aleatorio para la animación
-                const delay = Math.random() * 3; // Retardo entre 0 y 3 segundos
+                const delay = Math.random() * 3;
                 star.style.animationDelay = `${delay}s`;
 
                 starsContainer.appendChild(star);
@@ -444,7 +429,7 @@
             document.body.style.height = window.innerHeight + 'px';
             window.scrollTo(0, 0);
             updateSkyAndCelestial();
-            createStars(); // Generar las estrellas al cargar la página
+            createStars();
         };
 
         setInterval(updateCountdown, 100);
