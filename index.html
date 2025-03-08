@@ -6,7 +6,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>Grosvenor</title>
-    <link rel="apple-touch-icon" href="https://img.icons8.com/?size=100&id=fRKgJhBjMqCd&format=png&color=000000">
+    <link rel="apple-touch-icon" href="https://img.icons8.com/?size=100&id=15158&format=png&color=000000">
     <link rel="apple-touch-startup-image" href="https://example.com/splash.png">
     <style>
         html, body {
@@ -31,6 +31,9 @@
             transform: translateX(-50%);
             z-index: 3;
             width: 60px;
+            height: 60px;
+            object-fit: cover; /* Cambiado de contain a cover para llenar el espacio */
+            object-position: center; /* Centra la imagen */
             opacity: 0.9;
             border-radius: 10px;
             box-shadow: 0 0 10px rgba(0,0,0,0.3);
@@ -99,15 +102,15 @@
         #toggleRoute {
             margin-top: 20px;
             padding: 10px 20px;
-            font-size: 1.5em; /* Aumentado el tamaño para el emoji */
-            background-color: transparent; /* Fondo transparente */
-            color: #2c3e50; /* Color oscuro para el emoji */
+            font-size: 1.5em;
+            background-color: transparent;
+            color: #2c3e50;
             border: none;
             cursor: pointer;
-            transition: transform 0.3s; /* Cambiado a transform para rotación */
+            transition: transform 0.3s;
         }
         #toggleRoute:hover {
-            transform: rotate(180deg); /* Rotación en hover en lugar de cambio de color */
+            transform: rotate(180deg);
         }
     </style>
 </head>
@@ -309,34 +312,22 @@
             // Calcular minutos restantes
             const remainingMinutes = timeDifference;
             
-            // Transición de color en los últimos 3 minutos
-            if (remainingMinutes <= 3) {
-                // Convertir los 3 minutos a segundos (180 segundos)
-                const remainingSeconds = remainingMinutes * 60;
-                // Calcular el factor de transición (0 a 1)
-                const transitionFactor = (180 - remainingSeconds) / 180;
-                
-                // Colores iniciales (gris claro) y finales (rojo)
-                const startR = 204;
-                const startG = 204;
-                const startB = 204;
-                const endR = 255;
-                const endG = 0;
-                const endB = 0;
-                
-                // Calcular colores intermedios
-                const r = Math.round(startR + (endR - startR) * transitionFactor);
-                const g = Math.round(startG + (endG - startG) * transitionFactor);
-                const b = Math.round(startB + (endB - startB) * transitionFactor);
-                
-                progressFill.style.backgroundColor = `rgb(${r}, ${g}, ${b})`;
-                progressFill.style.transition = 'background-color 0.1s linear';
-            } else {
+            // Cambio específico a rojo en 5 segundos cuando quedan exactamente 3 minutos
+            if (remainingMinutes <= 3 && remainingMinutes > 2.9167) { // 2.9167 = 3 minutes - 5 seconds
+                // Iniciar transición de 5 segundos a rojo
+                progressFill.style.transition = 'background-color 5s linear';
+                progressFill.style.backgroundColor = 'rgb(255, 0, 0)';
+            } else if (remainingMinutes > 3) {
+                // Color normal basado en progreso
                 const startColor = 204;
                 const endColor = 51;
                 const colorValue = Math.round(startColor - (startColor - endColor) * (percentage / 100));
                 progressFill.style.backgroundColor = `rgb(${colorValue}, ${colorValue}, ${colorValue})`;
                 progressFill.style.transition = 'background-color 0.5s linear';
+            } else if (remainingMinutes <= 2.9167) {
+                // Mantener rojo completo después de la transición
+                progressFill.style.backgroundColor = 'rgb(255, 0, 0)';
+                progressFill.style.transition = 'none'; // Evitar transiciones adicionales
             }
 
             document.getElementById('busEmoji').style.left = `${busPosition}px`;
