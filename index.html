@@ -56,14 +56,14 @@
             background-color: #ddd;
             border-radius: 5px;
             position: relative;
-            overflow: hidden; /* Para que el relleno no se desborde */
+            overflow: hidden;
         }
         .progress-fill {
             height: 100%;
-            width: 0; /* Comienza en 0, se ajustará con JS */
-            background-color: #ccc; /* Color inicial, se oscurecerá con JS */
+            width: 0;
+            background-color: #ccc;
             border-radius: 5px;
-            transition: width 0.5s linear; /* Transición suave para el ancho */
+            transition: width 0.5s linear;
         }
         .bus-emoji {
             font-size: 24px;
@@ -147,17 +147,17 @@
             const celestial = document.getElementById('celestialBody');
             let gradient;
 
-            if (hours >= 5 && hours < 7) {
-                gradient = 'linear-gradient(to bottom, #ff6b6b, #4ecdc4)';
+            if (hours >= 5 && hours < 7) { // Amanecer en Dubái
+                gradient = 'linear-gradient(to bottom, #ff8c5a, #ffd700)'; // Naranja cálido a dorado
                 celestial.textContent = '☀️';
-            } else if (hours >= 7 && hours < 17) {
-                gradient = 'linear-gradient(to bottom, #87ceeb, #1e90ff)';
+            } else if (hours >= 7 && hours < 17) { // Día en Dubái
+                gradient = 'linear-gradient(to bottom, #87cefa, #4682b4)'; // Azul claro polvoriento a azul acero
                 celestial.textContent = '☀️';
-            } else if (hours >= 17 && hours < 19) {
-                gradient = 'linear-gradient(to bottom, #ff9f43, #ee5253)';
+            } else if (hours >= 17 && hours < 19) { // Atardecer en Dubái
+                gradient = 'linear-gradient(to bottom, #ff4500, #8b0000)'; // Naranja intenso a rojo oscuro
                 celestial.textContent = '☀️';
-            } else {
-                gradient = 'linear-gradient(to bottom, #2c3e50, #000033)';
+            } else { // Noche en Dubái
+                gradient = 'linear-gradient(to bottom, #191970, #000080)'; // Azul medianoche a azul profundo
                 celestial.textContent = '🌙';
             }
 
@@ -217,10 +217,8 @@
 
             const progressFill = document.getElementById('progressFill');
             progressFill.style.width = `${Math.min(Math.max(percentage, 0), 100)}%`;
-            
-            // Oscurecer el color de la barra: de gris claro (#ccc) a gris oscuro (#333)
-            const startColor = 204; // Valor RGB inicial (204 = #ccc)
-            const endColor = 51;   // Valor RGB final (51 = #333)
+            const startColor = 204;
+            const endColor = 51;
             const colorValue = Math.round(startColor - (startColor - endColor) * (percentage / 100));
             progressFill.style.backgroundColor = `rgb(${colorValue}, ${colorValue}, ${colorValue})`;
 
