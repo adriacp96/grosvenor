@@ -6,117 +6,27 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>Grosvenor</title>
-    <link rel="apple-touch-icon" href="https://img.icons8.com/?size=100&id=15158&format=png&color=000000">
+    <link rel="apple-touch-icon" href="https://img.icons8.com/?size=100&id=fRKgJhBjMqCd&format=png&color=000000">
     <link rel="apple-touch-startup-image" href="https://example.com/splash.png">
     <style>
-        html, body {
-            height: 100%;
-            width: 100%;
-            margin: 0;
-            padding: 0;
-            overflow: hidden;
-        }
-        body {
-            font-family: Helvetica, Arial, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            transition: background 1s ease;
-            position: relative;
-        }
-        .emirates-logo {
-            position: fixed;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 3;
-            width: 60px;
-            height: 60px;
-            object-fit: cover; /* Cambiado de contain a cover para llenar el espacio */
-            object-position: center; /* Centra la imagen */
-            opacity: 0.9;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.3);
-        }
-        .container {
-            text-align: center;
-            background-color: rgba(255, 255, 255, 0.9);
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.3);
-            z-index: 2;
-            position: relative;
-        }
-        #countdown {
-            font-size: 2.5em;
-            color: #2c3e50;
-            margin: 20px 0;
-        }
-        #nextBus {
-            font-size: 1.2em;
-            color: #7f8c8d;
-        }
-        .progress-container {
-            width: 300px;
-            margin: 20px auto;
-            position: relative;
-        }
-        .progress-bar {
-            width: 100%;
-            height: 10px;
-            background-color: #ddd;
-            border-radius: 5px;
-            position: relative;
-            overflow: hidden;
-        }
-        .progress-fill {
-            height: 100%;
-            width: 0;
-            background-color: #ccc;
-            border-radius: 5px;
-            transition: width 0.5s linear, background-color 0.5s linear;
-        }
-        .bus-emoji {
-            font-size: 24px;
-            position: absolute;
-            top: -20px;
-            left: 0;
-            transform: scaleX(-1);
-            transition: left 0.5s linear;
-        }
-        #celestialBody {
-            font-size: 60px;
-            position: absolute;
-            transition: all 1s ease;
-            z-index: 1;
-        }
-        .dunes {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 25vh;
-            z-index: 1;
-            pointer-events: none;
-        }
-        #toggleRoute {
-            margin-top: 20px;
-            padding: 10px 20px;
-            font-size: 1.5em;
-            background-color: transparent;
-            color: #2c3e50;
-            border: none;
-            cursor: pointer;
-            transition: transform 0.3s;
-        }
-        #toggleRoute:hover {
-            transform: rotate(180deg);
-        }
+        html,body{height:100%;width:100%;margin:0;padding:0;overflow:hidden}
+        body{font-family:Helvetica,Arial,sans-serif;display:flex;justify-content:center;align-items:center;transition:background 1s ease;position:relative}
+        .emirates-logo{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:3;width:60px;height:60px;object-fit:cover;object-position:center;opacity:.9;border-radius:10px;box-shadow:0 0 10px rgba(0,0,0,.3)}
+        .container{text-align:center;background-color:rgba(255,255,255,.9);padding:20px;border-radius:10px;box-shadow:0 0 10px rgba(0,0,0,.3);z-index:2;position:relative}
+        #countdown{font-size:2.5em;color:#2c3e50;margin:20px 0}
+        #nextBus{font-size:1.2em;color:#7f8c8d}
+        .progress-container{width:300px;margin:20px auto;position:relative}
+        .progress-bar{width:100%;height:10px;background-color:#ddd;border-radius:5px;position:relative;overflow:hidden}
+        .progress-fill{height:100%;width:0;background-color:#ccc;border-radius:5px;transition:width .5s linear,background-color .5s linear}
+        .bus-emoji{font-size:24px;position:absolute;top:-20px;left:0;transform:scaleX(-1);transition:left .5s linear}
+        #celestialBody{font-size:60px;position:absolute;transition:all 1s ease;z-index:1}
+        .dunes{position:absolute;bottom:0;left:0;width:100%;height:25vh;z-index:1;pointer-events:none}
+        #toggleRoute{margin-top:20px;padding:10px 20px;font-size:1.5em;background-color:transparent;color:#2c3e50;border:none;cursor:pointer;transition:transform .3s}
+        #toggleRoute:hover{transform:rotate(180deg)}
     </style>
 </head>
 <body>
-    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d0/Emirates_logo.svg/1200px-Emirates_logo.svg.png" 
-         alt="Emirates Logo" class="emirates-logo">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d0/Emirates_logo.svg/120px-Emirates_logo.svg.png" alt="Emirates Logo" class="emirates-logo">
     <div class="container">
         <h1 id="routeTitle">Grosvenor to HQ in</h1>
         <div id="countdown">00:00</div>
@@ -131,233 +41,26 @@
     </div>
     <div id="celestialBody">☀️</div>
     <svg class="dunes" viewBox="0 0 1000 250" preserveAspectRatio="none">
-        <path id="dunePath" fill="rgba(237, 201, 175, 0.4)" />
+        <path id="dunePath" fill="rgba(237,201,175,.4)"/>
     </svg>
-
     <script>
-        let dunePoints = [];
-        let isGrosvenorToHQ = true;
-
-        const grosvenorToHQSchedule = [
-            "00:43", "01:03", "01:23", "01:43", "02:03", "02:23", "02:53", "03:23", "03:53", "04:23", "04:48", "05:08", 
-            "05:28", "05:53", "06:13", "06:33", "06:53", "07:13", "07:38", "08:03", "08:28", "08:53", "09:18", "09:48", 
-            "10:13", "10:38", "11:03", "11:28", "11:53", "12:18", "12:38", "12:58", "13:18", "13:38", "13:58", "14:18", 
-            "14:43", "15:08", "15:33", "15:58", "16:23", "16:48", "17:17", "17:42", "18:07", "18:32", "18:57", "19:22", 
-            "19:47", "20:12", "20:37", "21:00", "21:23", "21:48", "22:13", "22:38", "23:03", "23:28", "23:53", "00:18"
-        ];
-
-        const hqToGrosvenorSchedule = [
-            "00:15", "00:35", "00:55", "01:15", "01:35", "01:55", "02:25", "02:55", "03:25", "03:55", 
-            "04:20", "04:40", "05:00", "05:25", "05:45", "06:05", "06:25", "06:45", "07:10", "07:35", 
-            "08:00", "08:25", "08:50", "09:20", "09:45", "10:10", "10:35", "11:00", "11:25", "11:50", 
-            "12:10", "12:30", "12:50", "13:10", "13:30", "13:50", "14:15", "14:40", "15:05", "15:30", 
-            "15:55", "16:20", "16:45", "17:10", "17:35", "18:00", "18:25", "18:50", "19:15", "19:40", 
-            "20:05", "20:30", "20:55", "21:20", "21:45", "22:10", "22:35", "23:00", "23:25", "23:50"
-        ];
-
-        function generateRandomDune() {
-            const segments = 4;
-            const width = 1000;
-            const segmentWidth = width / segments;
-            let path = "M0,250";
-            dunePoints = [{ x: 0, y: 250 }];
-
-            for (let i = 1; i <= segments; i++) {
-                const x1 = (i - 0.66) * segmentWidth;
-                const y1 = 250 - Math.random() * 130;
-                const x2 = (i - 0.33) * segmentWidth;
-                const y2 = 250 - Math.random() * 130;
-                const x3 = i * segmentWidth;
-                const y3 = i === segments ? 250 : 250 - Math.random() * 130;
-
-                path += ` C${x1},${y1} ${x2},${y2} ${x3},${y3}`;
-                dunePoints.push({ x: x1, y: y1 }, { x: x2, y: y2 }, { x: x3, y: y3 });
-            }
-
-            path += " L0,250 Z";
-            document.getElementById("dunePath").setAttribute("d", path);
-        }
-
-        function getBezierY(t, p0, p1, p2, p3) {
-            const mt = 1 - t;
-            return Math.pow(mt, 3) * p0.y + 3 * Math.pow(mt, 2) * t * p1.y + 
-                   3 * mt * Math.pow(t, 2) * p2.y + Math.pow(t, 3) * p3.y;
-        }
-
-        function getDuneHeight(x) {
-            for (let i = 0; i < dunePoints.length - 3; i += 3) {
-                const p0 = dunePoints[i];
-                const p1 = dunePoints[i + 1];
-                const p2 = dunePoints[i + 2];
-                const p3 = dunePoints[i + 3];
-                if (x >= p0.x && x <= p3.x) {
-                    const t = (x - p0.x) / (p3.x - p0.x);
-                    return getBezierY(t, p0, p1, p2, p3);
-                }
-            }
-            return 250;
-        }
-
-        function getBusTimes() {
-            const currentSchedule = isGrosvenorToHQ ? grosvenorToHQSchedule : hqToGrosvenorSchedule;
-            const now = new Date();
-            const currentTimeInMinutes = now.getHours() * 60 + now.getMinutes() + (now.getSeconds() + now.getMilliseconds() / 1000) / 60;
-            let previousBus = { time: currentSchedule[currentSchedule.length - 1], minutes: 0 };
-            let nextBus = { time: currentSchedule[0], minutes: 0 };
-
-            for (let i = 0; i < currentSchedule.length; i++) {
-                const [hours, minutes] = currentSchedule[i].split(':').map(Number);
-                const busTimeInMinutes = hours * 60 + minutes;
-
-                if (busTimeInMinutes > currentTimeInMinutes) {
-                    nextBus = { time: currentSchedule[i], minutes: busTimeInMinutes };
-                    previousBus = { 
-                        time: currentSchedule[i-1] || currentSchedule[currentSchedule.length-1], 
-                        minutes: (i-1 >= 0 ? currentSchedule[i-1] : currentSchedule[currentSchedule.length-1])
-                            .split(':').map(Number).reduce((h,m) => h*60 + m)
-                    };
-                    break;
-                }
-            }
-
-            if (!nextBus.minutes) {
-                nextBus = { time: currentSchedule[0], minutes: currentSchedule[0].split(':').map(Number)[0] * 60 + 
-                           currentSchedule[0].split(':').map(Number)[1] + 1440 };
-                previousBus = { time: currentSchedule[currentSchedule.length-1], 
-                              minutes: currentSchedule[currentSchedule.length-1].split(':').map(Number)[0] * 60 + 
-                              currentSchedule[currentSchedule.length-1].split(':').map(Number)[1] };
-            }
-
-            return { previousBus, nextBus };
-        }
-
-        function updateSkyAndCelestial() {
-            const now = new Date();
-            const hours = now.getHours();
-            const minutes = now.getMinutes();
-            const totalMinutes = hours * 60 + minutes;
-            const celestial = document.getElementById('celestialBody');
-            let gradient;
-
-            if (hours >= 5 && hours < 7) {
-                gradient = 'linear-gradient(to bottom, #ff8c5a, #ffd700)';
-                celestial.textContent = '☀️';
-            } else if (hours >= 7 && hours < 17) {
-                gradient = 'linear-gradient(to bottom, #87cefa, #4682b4)';
-                celestial.textContent = '☀️';
-            } else if (hours >= 17 && hours < 19) {
-                gradient = 'linear-gradient(to bottom, #ff4500, #8b0000)';
-                celestial.textContent = '☀️';
-            } else {
-                gradient = 'linear-gradient(to bottom, #191970, #000080)';
-                celestial.textContent = '🌙';
-            }
-
-            document.body.style.background = gradient;
-
-            let progress, topPosition, leftPosition;
-            if (hours >= 5 && hours < 19) {
-                progress = (totalMinutes - 5 * 60) / (14 * 60);
-            } else {
-                progress = (totalMinutes >= 19 * 60 ? totalMinutes - 19 * 60 : totalMinutes + 5 * 60) / (10 * 60);
-            }
-
-            leftPosition = 10 + progress * 80;
-            const a = 80;
-            const h = 20;
-            const x = progress - 0.5;
-            topPosition = -a * x * x + h;
-
-            const container = document.querySelector('.container');
-            const containerRect = container.getBoundingClientRect();
-            const containerTop = containerRect.top / window.innerHeight * 100;
-            const containerBottom = containerRect.bottom / window.innerHeight * 100;
-            const containerLeft = containerRect.left / window.innerWidth * 100;
-            const containerRight = containerRect.right / window.innerWidth * 100;
-
-            if (topPosition + 5 > containerTop && topPosition < containerBottom &&
-                leftPosition > containerLeft - 10 && leftPosition < containerRight + 10) {
-                topPosition = containerTop - 10;
-            }
-
-            celestial.style.top = `${topPosition}vh`;
-            celestial.style.left = `${leftPosition}vw`;
-        }
-
-        function updateCountdown() {
-            const now = new Date();
-            const currentTimeInMinutes = now.getHours() * 60 + now.getMinutes() + (now.getSeconds() + now.getMilliseconds() / 1000) / 60;
-            const { previousBus, nextBus } = getBusTimes();
-            let timeDifference = nextBus.minutes - currentTimeInMinutes;
-
-            if (timeDifference < 0) {
-                timeDifference += 1440;
-            }
-
-            const minutes = Math.floor(timeDifference % 60);
-            const seconds = Math.floor((timeDifference * 60) % 60);
-
-            document.getElementById('countdown').textContent = 
-                `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
-            document.getElementById('nextBus').textContent = `Next bus at: ${nextBus.time}`;
-
-            const totalDuration = (nextBus.minutes - previousBus.minutes + 1440) % 1440;
-            const elapsed = (currentTimeInMinutes - previousBus.minutes + 1440) % 1440;
-            const percentage = (elapsed / totalDuration) * 100;
-            const busPosition = Math.min(Math.max(percentage, 0), 100) * 2.76;
-
-            const progressFill = document.getElementById('progressFill');
-            progressFill.style.width = `${Math.min(Math.max(percentage, 0), 100)}%`;
-
-            // Calcular minutos restantes
-            const remainingMinutes = timeDifference;
-            
-            // Cambio específico a rojo en 5 segundos cuando quedan exactamente 3 minutos
-            if (remainingMinutes <= 3 && remainingMinutes > 2.9167) { // 2.9167 = 3 minutes - 5 seconds
-                // Iniciar transición de 5 segundos a rojo
-                progressFill.style.transition = 'background-color 5s linear';
-                progressFill.style.backgroundColor = 'rgb(255, 0, 0)';
-            } else if (remainingMinutes > 3) {
-                // Color normal basado en progreso
-                const startColor = 204;
-                const endColor = 51;
-                const colorValue = Math.round(startColor - (startColor - endColor) * (percentage / 100));
-                progressFill.style.backgroundColor = `rgb(${colorValue}, ${colorValue}, ${colorValue})`;
-                progressFill.style.transition = 'background-color 0.5s linear';
-            } else if (remainingMinutes <= 2.9167) {
-                // Mantener rojo completo después de la transición
-                progressFill.style.backgroundColor = 'rgb(255, 0, 0)';
-                progressFill.style.transition = 'none'; // Evitar transiciones adicionales
-            }
-
-            document.getElementById('busEmoji').style.left = `${busPosition}px`;
-            
-            updateSkyAndCelestial();
-        }
-
-        document.getElementById('toggleRoute').addEventListener('click', function() {
-            isGrosvenorToHQ = !isGrosvenorToHQ;
-            const routeTitle = document.getElementById('routeTitle');
-            const toggleButton = document.getElementById('toggleRoute');
-            
-            if (isGrosvenorToHQ) {
-                routeTitle.textContent = "Grosvenor to HQ in";
-                toggleButton.textContent = "🔄";
-            } else {
-                routeTitle.textContent = "HQ to Grosvenor in";
-                toggleButton.textContent = "🔄";
-            }
-            updateCountdown();
-        });
-
-        window.onload = function() {
-            generateRandomDune();
-            document.body.style.height = window.innerHeight + 'px';
-            window.scrollTo(0, 0);
-        };
-
-        setInterval(updateCountdown, 100);
-        updateCountdown();
+        const grosvenorToHQSchedule=["00:43","01:03","01:23","01:43","02:03","02:23","02:53","03:23","03:53","04:23","04:48","05:08","05:28","05:53","06:13","06:33","06:53","07:13","07:38","08:03","08:28","08:53","09:18","09:48","10:13","10:38","11:03","11:28","11:53","12:18","12:38","12:58","13:18","13:38","13:58","14:18","14:43","15:08","15:33","15:58","16:23","16:48","17:17","17:42","18:07","18:32","18:57","19:22","19:47","20:12","20:37","21:00","21:23","21:48","22:13","22:38","23:03","23:28","23:53","00:18"],
+        hqToGrosvenorSchedule=["00:15","00:35","00:55","01:15","01:35","01:55","02:25","02:55","03:25","03:55","04:20","04:40","05:00","05:25","05:45","06:05","06:25","06:45","07:10","07:35","08:00","08:25","08:50","09:20","09:45","10:10","10:35","11:00","11:25","11:50","12:10","12:30","12:50","13:10","13:30","13:50","14:15","14:40","15:05","15:30","15:55","16:20","16:45","17:10","17:35","18:00","18:25","18:50","19:15","19:40","20:05","20:30","20:55","21:20","21:45","22:10","22:35","23:00","23:25","23:50"];
+        let dunePoints=[],isGrosvenorToHQ=true;
+        
+        function generateRandomDune(){const e=4,t=1e3,n=t/e;let a="M0,250";for(dunePoints=[{x:0,y:250}],let i=1;i<=e;i++){const e=(i-.66)*n,o=250-130*Math.random(),s=(i-.33)*n,r=250-130*Math.random(),l=i*n,c=i===e?250:250-130*Math.random();a+=` C${e},${o} ${s},${r} ${l},${c}`,dunePoints.push({x:e,y:o},{x:s,y:r},{x:l,y:c})}a+=" L0,250 Z",document.getElementById("dunePath").setAttribute("d",a)}
+        
+        function getBezierY(e,t,n,a,i){const o=1-e;return o*o*o*t.y+3*o*o*e*n.y+3*o*e*e*a.y+e*e*e*i.y}
+        
+        function getDuneHeight(e){for(let t=0;t<dunePoints.length-3;t+=3){const n=dunePoints[t],a=dunePoints[t+1],i=dunePoints[t+2],o=dunePoints[t+3];if(e>=n.x&&e<=o.x){const t=(e-n.x)/(o.x-n.x);return getBezierY(t,n,a,i,o)}}return 250}
+        
+        function getBusTimes(){const e=isGrosvenorToHQ?grosvenorToHQSchedule:hqToGrosvenorSchedule,t=new Date,n=t.getHours()*60+t.getMinutes()+(t.getSeconds()+t.getMilliseconds()/1e3)/60;let a={time:e[e.length-1],minutes:0},i={time:e[0],minutes:0};for(let t=0;t<e.length;t++){const o=e[t].split(":").map(Number),s=60*o[0]+o[1];if(s>n){i={time:e[t],minutes:s},a={time:e[t-1]||e[e.length-1],minutes:(t-1>=0?e[t-1]:e[e.length-1]).split(":").map(Number).reduce((e,t)=>60*e+t)};break}}return i.minutes||(i={time:e[0],minutes:60*e[0].split(":")[0]+ +e[0].split(":")[1]+1440},a={time:e[e.length-1],minutes:60*e[e.length-1].split(":")[0]+ +e[e.length-1].split(":")[1]}),{previousBus:a,nextBus:i}}
+        
+        function updateSkyAndCelestial(){const e=new Date,t=e.getHours(),n=e.getMinutes(),a=60*t+n,i=document.getElementById("celestialBody");let o;t>=5&&t<7?(o="linear-gradient(to bottom,#ff8c5a,#ffd700)",i.textContent="☀️"):t>=7&&t<17?(o="linear-gradient(to bottom,#87cefa,#4682b4)",i.textContent="☀️"):t>=17&&t<19?(o="linear-gradient(to bottom,#ff4500,#8b0000)",i.textContent="☀️"):(o="linear-gradient(to bottom,#191970,#000080)",i.textContent="🌙"),document.body.style.background=o;let s,r,l;t>=5&&t<19?s=(a-300)/840:s=(a>=1140?a-1140:a+300)/600,r=10+80*s;const c=.5-s;l=-(80*c*c)+20;const d=document.querySelector(".container").getBoundingClientRect(),u=100*d.top/window.innerHeight,m=100*d.bottom/window.innerHeight,g=100*d.left/window.innerWidth,p=100*d.right/window.innerWidth;l+5>u&&l<m&&r>g-10&&r<p+10&&(l=u-10),i.style.top=l+"vh",i.style.left=r+"vw"}
+        
+        function updateCountdown(){const e=new Date,t=e.getHours()*60+e.getMinutes()+(e.getSeconds()+e.getMilliseconds()/1e3)/60,{previousBus:n,nextBus:a}=getBusTimes();let i=a.minutes-t;i<0&&(i+=1440);const o=Math.floor(i%60),s=Math.floor(60*i%60);document.getElementById("countdown").textContent=`${o.toString().padStart(2,"0")}:${s.toString().padStart(2,"0")}`,document.getElementById("nextBus").textContent="Next bus at: "+a.time;const r=(a.minutes-n.minutes+1440)%1440,l=(t-n.minutes+1440)%1440,c=l/r*100,d=2.76*Math.min(Math.max(c,0),100),u=document.getElementById("progressFill");if(u.style.width=Math.min(Math.max(c,0),100)+"%",i<=3&&i>2.9167)u.style.transition="background-color 5s linear",u.style.backgroundColor="rgb(255,0,0)";else if(i>3){const e=Math.round(204-(153*c/100));u.style.backgroundColor=`rgb(${e},${e},${e})`,u.style.transition="background-color .5s linear"}else i<=2.9167&&(u.style.backgroundColor="rgb(255,0,0)",u.style.transition="none");document.getElementById("busEmoji").style.left=d+"px",updateSkyAndCelestial()}
+        
+        document.getElementById("toggleRoute").onclick=()=>{isGrosvenorToHQ=!isGrosvenorToHQ;const e=document.getElementById("routeTitle"),t=document.getElementById("toggleRoute");isGrosvenorToHQ?(e.textContent="Grosvenor to HQ in",t.textContent="🔄"):(e.textContent="HQ to Grosvenor in",t.textContent="🔄"),updateCountdown()},window.onload=()=>{generateRandomDune(),document.body.style.height=window.innerHeight+"px",window.scrollTo(0,0)},setInterval(updateCountdown,100),updateCountdown();
     </script>
 </body>
 </html>
