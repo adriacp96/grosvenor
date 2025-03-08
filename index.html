@@ -54,7 +54,6 @@
             box-shadow: 0 0 10px rgba(0,0,0,0.3);
             z-index: 2;
             position: relative;
-            display: none; /* Ocultar la interfaz inicialmente */
         }
         #countdown {
             font-size: 2.5em;
@@ -145,7 +144,7 @@
         }
         .input-container {
             margin-top: 20px;
-            display: flex;
+            display: none; /* Ocultar inicialmente */
             justify-content: center;
             align-items: center;
             gap: 10px;
@@ -178,17 +177,18 @@
             margin-top: 10px;
             font-size: 1.1em;
             color: #2c3e50;
+            display: none; /* Ocultar inicialmente */
         }
         #eGateButton {
-            padding: 15px 30px;
-            font-size: 1.5em;
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 1.2em;
             background-color: #2c3e50;
             color: white;
             border: none;
-            border-radius: 10px;
+            border-radius: 5px;
             cursor: pointer;
             transition: background-color 0.3s, transform 0.3s;
-            z-index: 2;
         }
         #eGateButton:hover {
             background-color: #34495e;
@@ -199,7 +199,6 @@
 <body>
     <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d0/Emirates_logo.svg/1200px-Emirates_logo.svg.png" 
          alt="Emirates Logo" class="emirates-logo">
-    <button id="eGateButton">eGate</button>
     <div class="container">
         <h1 id="routeTitle">Grosvenor to HQ in</h1>
         <div id="countdown">00:00</div>
@@ -211,6 +210,7 @@
             <div class="bus-emoji" id="busEmoji">🚌</div>
         </div>
         <button id="toggleRoute">🔄</button>
+        <button id="eGateButton">eGate</button>
         <div class="input-container">
             <span>eGate</span>
             <input type="time" id="busTimeInput">
@@ -528,6 +528,7 @@
             } else {
                 const result = closestTimes.map(item => `${item.gros} ➡️ ${item.hq}`).join(', ');
                 closestTimesDiv.textContent = result;
+                closestTimesDiv.style.display = 'block'; // Mostrar resultados
             }
         });
 
@@ -535,11 +536,10 @@
             document.getElementById('playButton').click();
         });
 
-        // Mostrar la interfaz al hacer clic en el botón eGate
+        // Mostrar el input y resultados al hacer clic en el botón eGate
         document.getElementById('eGateButton').addEventListener('click', function() {
             document.getElementById('eGateButton').style.display = 'none'; // Ocultar el botón
-            document.querySelector('.container').style.display = 'block'; // Mostrar la interfaz
-            updateCountdown(); // Iniciar el conteo al mostrar la interfaz
+            document.querySelector('.input-container').style.display = 'flex'; // Mostrar el input
         });
 
         window.onload = function() {
@@ -548,6 +548,7 @@
             window.scrollTo(0, 0);
             updateSkyAndCelestial();
             createStars();
+            updateCountdown();
         };
 
         setInterval(updateCountdown, 100);
