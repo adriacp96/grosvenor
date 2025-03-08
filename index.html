@@ -16,13 +16,24 @@
             position: relative;
             overflow: hidden;
         }
+        .emirates-logo {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 3;
+            width: 60px;
+            opacity: 0.9;
+            border-radius: 10px; /* Bordes redondeados */
+            box-shadow: 0 0 10px rgba(0,0,0,0.3); /* Sombra igual a la del contenedor */
+        }
         .container {
             text-align: center;
             background-color: rgba(255, 255, 255, 0.9);
             padding: 20px;
             border-radius: 10px;
             box-shadow: 0 0 10px rgba(0,0,0,0.3);
-            z-index: 2; /* Más alto para estar sobre el sol/luna */
+            z-index: 2;
             position: relative;
         }
         #countdown {
@@ -58,11 +69,13 @@
             font-size: 60px;
             position: absolute;
             transition: all 1s ease;
-            z-index: 1; /* Detrás del contenedor */
+            z-index: 1;
         }
     </style>
 </head>
 <body>
+    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d0/Emirates_logo.svg/1200px-Emirates_logo.svg.png" 
+         alt="Emirates Logo" class="emirates-logo">
     <div class="container">
         <h1>Grosvenor to HQ in</h1>
         <div id="countdown">00:00</div>
@@ -124,49 +137,45 @@
             const celestial = document.getElementById('celestialBody');
             let gradient;
 
-            // Fondo del cielo
-            if (hours >= 5 && hours < 7) { // Amanecer
+            if (hours >= 5 && hours < 7) {
                 gradient = 'linear-gradient(to bottom, #ff6b6b, #4ecdc4)';
                 celestial.textContent = '☀️';
-            } else if (hours >= 7 && hours < 17) { // Día
+            } else if (hours >= 7 && hours < 17) {
                 gradient = 'linear-gradient(to bottom, #87ceeb, #1e90ff)';
                 celestial.textContent = '☀️';
-            } else if (hours >= 17 && hours < 19) { // Atardecer
+            } else if (hours >= 17 && hours < 19) {
                 gradient = 'linear-gradient(to bottom, #ff9f43, #ee5253)';
                 celestial.textContent = '☀️';
-            } else { // Noche
+            } else {
                 gradient = 'linear-gradient(to bottom, #2c3e50, #000033)';
                 celestial.textContent = '🌙';
             }
 
             document.body.style.background = gradient;
 
-            // Posición del sol/luna ajustada para no superponerse al contenedor
-            let topPosition, leftPosition;
+            let progress, topPosition, leftPosition;
+            if (hours >= 5 && hours < 19) {
+                progress = (totalMinutes - 5 * 60) / (14 * 60);
+            } else {
+                progress = (totalMinutes >= 19 * 60 ? totalMinutes - 19 * 60 : totalMinutes + 5 * 60) / (10 * 60);
+            }
+
+            leftPosition = 10 + progress * 80;
+            const a = 80;
+            const h = 20;
+            const x = progress - 0.5;
+            topPosition = -a * x * x + h;
+
             const container = document.querySelector('.container');
             const containerRect = container.getBoundingClientRect();
-            const containerTop = containerRect.top / window.innerHeight * 100; // En vh
+            const containerTop = containerRect.top / window.innerHeight * 100;
             const containerBottom = containerRect.bottom / window.innerHeight * 100;
-            const containerLeft = containerRect.left / window.innerWidth * 100; // En vw
+            const containerLeft = containerRect.left / window.innerWidth * 100;
             const containerRight = containerRect.right / window.innerWidth * 100;
 
-            if (hours >= 5 && hours < 19) { // Día (sol)
-                const dayProgress = (totalMinutes - 5 * 60) / (14 * 60); // 5 AM a 7 PM
-                topPosition = Math.sin(dayProgress * Math.PI) * 20 + 5; // Arco más bajo para evitar el contenedor
-                leftPosition = dayProgress * 80 + 10; // Movimiento horizontal
-                // Asegurarse de que no se superponga al contenedor
-                if (topPosition + 5 > containerTop && topPosition < containerBottom &&
-                    leftPosition > containerLeft - 10 && leftPosition < containerRight + 10) {
-                    topPosition = containerTop - 10; // Mover arriba del contenedor
-                }
-            } else { // Noche (luna)
-                const nightProgress = (totalMinutes >= 19 * 60 ? totalMinutes - 19 * 60 : totalMinutes + 5 * 60) / (10 * 60);
-                topPosition = Math.sin(nightProgress * Math.PI) * 15 + 10; // Arco aún más bajo
-                leftPosition = nightProgress * 80 + 10;
-                if (topPosition + 5 > containerTop && topPosition < containerBottom &&
-                    leftPosition > containerLeft - 10 && leftPosition < containerRight + 10) {
-                    topPosition = containerBottom + 5; // Mover debajo del contenedor
-                }
+            if (topPosition + 5 > containerTop && topPosition < containerBottom &&
+                leftPosition > containerLeft - 10 && leftPosition < containerRight + 10) {
+                topPosition = containerTop - 10;
             }
 
             celestial.style.top = `${topPosition}vh`;
