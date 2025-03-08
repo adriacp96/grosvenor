@@ -24,8 +24,8 @@
             z-index: 3;
             width: 60px;
             opacity: 0.9;
-            border-radius: 10px; /* Bordes redondeados */
-            box-shadow: 0 0 10px rgba(0,0,0,0.3); /* Sombra igual a la del contenedor */
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.3);
         }
         .container {
             text-align: center;
@@ -56,6 +56,14 @@
             background-color: #ddd;
             border-radius: 5px;
             position: relative;
+            overflow: hidden; /* Para que el relleno no se desborde */
+        }
+        .progress-fill {
+            height: 100%;
+            width: 0; /* Comienza en 0, se ajustará con JS */
+            background-color: #ccc; /* Color inicial, se oscurecerá con JS */
+            border-radius: 5px;
+            transition: width 0.5s linear; /* Transición suave para el ancho */
         }
         .bus-emoji {
             font-size: 24px;
@@ -81,7 +89,9 @@
         <div id="countdown">00:00</div>
         <div id="nextBus">Next bus at: --:--</div>
         <div class="progress-container">
-            <div class="progress-bar"></div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
             <div class="bus-emoji" id="busEmoji">🚌</div>
         </div>
     </div>
@@ -204,6 +214,15 @@
             const elapsed = (currentTimeInMinutes - previousBus.minutes + 1440) % 1440;
             const percentage = (elapsed / totalDuration) * 100;
             const busPosition = Math.min(Math.max(percentage, 0), 100) * 2.76;
+
+            const progressFill = document.getElementById('progressFill');
+            progressFill.style.width = `${Math.min(Math.max(percentage, 0), 100)}%`;
+            
+            // Oscurecer el color de la barra: de gris claro (#ccc) a gris oscuro (#333)
+            const startColor = 204; // Valor RGB inicial (204 = #ccc)
+            const endColor = 51;   // Valor RGB final (51 = #333)
+            const colorValue = Math.round(startColor - (startColor - endColor) * (percentage / 100));
+            progressFill.style.backgroundColor = `rgb(${colorValue}, ${colorValue}, ${colorValue})`;
 
             document.getElementById('busEmoji').style.left = `${busPosition}px`;
             
