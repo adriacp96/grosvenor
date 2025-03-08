@@ -142,6 +142,40 @@
             50% { opacity: 0.1; }
             100% { opacity: 0.3; }
         }
+        .input-container {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+        #busTimeInput {
+            padding: 10px;
+            font-size: 1.2em;
+            border: 2px solid #2c3e50;
+            border-radius: 5px;
+            outline: none;
+            width: 100px;
+            text-align: center;
+        }
+        #playButton {
+            padding: 10px 15px;
+            font-size: 1.2em;
+            background-color: #2c3e50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        #playButton:hover {
+            background-color: #34495e;
+        }
+        #closestTimes {
+            margin-top: 10px;
+            font-size: 1.1em;
+            color: #2c3e50;
+        }
     </style>
 </head>
 <body>
@@ -158,6 +192,12 @@
             <div class="bus-emoji" id="busEmoji">🚌</div>
         </div>
         <button id="toggleRoute">🔄</button>
+        <div class="input-container">
+            <span>eGate</span>
+            <input type="text" id="busTimeInput" placeholder="HH:MM (24h)" maxlength="5" pattern="[0-2][0-9]:[0-5][0-9]">
+            <button id="playButton">▶</button>
+        </div>
+        <div id="closestTimes"></div>
     </div>
     <div id="celestialBody">☀️</div>
     <svg class="dunes" viewBox="0 0 1000 250" preserveAspectRatio="none">
@@ -170,11 +210,26 @@
         let isGrosvenorToHQ = true;
 
         const grosvenorToHQSchedule = [
-            "00:43", "01:03", "01:23", "01:43", "02:03", "02:23", "02:53", "03:23", "03:53", "04:23", "04:48", "05:08", 
-            "05:28", "05:53", "06:13", "06:33", "06:53", "07:13", "07:38", "08:03", "08:28", "08:53", "09:18", "09:48", 
-            "10:13", "10:38", "11:03", "11:28", "11:53", "12:18", "12:38", "12:58", "13:18", "13:38", "13:58", "14:18", 
-            "14:43", "15:08", "15:33", "15:58", "16:23", "16:48", "17:17", "17:42", "18:07", "18:32", "18:57", "19:22", 
-            "19:47", "20:12", "20:37", "21:00", "21:23", "21:48", "22:13", "22:38", "23:03", "23:28", "23:53", "00:18"
+            { gros: "00:43", hq: "01:03" }, { gros: "01:03", hq: "01:23" }, { gros: "01:23", hq: "01:43" },
+            { gros: "01:43", hq: "02:03" }, { gros: "02:03", hq: "02:23" }, { gros: "02:23", hq: "02:43" },
+            { gros: "02:53", hq: "03:13" }, { gros: "03:23", hq: "03:43" }, { gros: "03:53", hq: "04:13" },
+            { gros: "04:23", hq: "04:43" }, { gros: "04:48", hq: "05:08" }, { gros: "05:08", hq: "05:28" },
+            { gros: "05:28", hq: "05:48" }, { gros: "05:53", hq: "06:13" }, { gros: "06:13", hq: "06:33" },
+            { gros: "06:33", hq: "06:53" }, { gros: "06:53", hq: "07:13" }, { gros: "07:13", hq: "07:33" },
+            { gros: "07:38", hq: "07:58" }, { gros: "08:03", hq: "08:23" }, { gros: "08:28", hq: "08:48" },
+            { gros: "08:53", hq: "09:13" }, { gros: "09:18", hq: "09:38" }, { gros: "09:48", hq: "10:08" },
+            { gros: "10:13", hq: "10:33" }, { gros: "10:38", hq: "10:58" }, { gros: "11:03", hq: "11:23" },
+            { gros: "11:28", hq: "11:48" }, { gros: "11:53", hq: "12:13" }, { gros: "12:18", hq: "12:38" },
+            { gros: "12:38", hq: "12:58" }, { gros: "12:58", hq: "13:18" }, { gros: "13:18", hq: "13:38" },
+            { gros: "13:38", hq: "13:58" }, { gros: "13:58", hq: "14:18" }, { gros: "14:18", hq: "14:38" },
+            { gros: "14:43", hq: "15:03" }, { gros: "15:08", hq: "15:28" }, { gros: "15:33", hq: "15:53" },
+            { gros: "15:58", hq: "16:18" }, { gros: "16:23", hq: "16:43" }, { gros: "16:48", hq: "17:08" },
+            { gros: "17:17", hq: "17:39" }, { gros: "17:42", hq: "18:04" }, { gros: "18:07", hq: "18:32" },
+            { gros: "18:32", hq: "18:57" }, { gros: "18:57", hq: "19:22" }, { gros: "19:22", hq: "19:47" },
+            { gros: "19:47", hq: "20:12" }, { gros: "20:12", hq: "20:34" }, { gros: "20:37", hq: "20:59" },
+            { gros: "21:00", hq: "21:20" }, { gros: "21:23", hq: "21:43" }, { gros: "21:48", hq: "22:08" },
+            { gros: "22:13", hq: "22:33" }, { gros: "22:38", hq: "22:58" }, { gros: "23:03", hq: "23:23" },
+            { gros: "23:28", hq: "23:48" }, { gros: "23:53", hq: "00:13" }, { gros: "00:18", hq: "00:38" }
         ];
 
         const hqToGrosvenorSchedule = [
@@ -230,7 +285,7 @@
         }
 
         function getBusTimes() {
-            const currentSchedule = isGrosvenorToHQ ? grosvenorToHQSchedule : hqToGrosvenorSchedule;
+            const currentSchedule = isGrosvenorToHQ ? grosvenorToHQSchedule.map(item => item.gros) : hqToGrosvenorSchedule;
             const now = new Date();
             const currentTimeInMinutes = now.getHours() * 60 + now.getMinutes() + (now.getSeconds() + now.getMilliseconds() / 1000) / 60;
             let previousBus = { time: currentSchedule[currentSchedule.length - 1], minutes: 0 };
@@ -263,9 +318,8 @@
         }
 
         function updateSkyAndCelestial() {
-            // Obtener hora actual en Dubái (UTC+4)
             const now = new Date();
-            const utcOffset = 4 * 60; // Dubái está en UTC+4
+            const utcOffset = 4 * 60;
             const dubaiTime = new Date(now.getTime() + utcOffset * 60 * 1000);
             const hours = dubaiTime.getHours();
             const minutes = dubaiTime.getMinutes();
@@ -274,60 +328,51 @@
             const celestial = document.getElementById('celestialBody');
             let gradient;
 
-            // Horarios aproximados de amanecer y atardecer en Dubái (ajustados a marzo)
-            const sunrise = 6.5 * 60; // 06:30
-            const sunset = 18.5 * 60; // 18:30
-            const dayLength = sunset - sunrise; // Duración del día
-            const nightLength = 1440 - dayLength; // Duración de la noche
+            const sunrise = 6.5 * 60;
+            const sunset = 18.5 * 60;
+            const dayLength = sunset - sunrise;
+            const nightLength = 1440 - dayLength;
 
-            // Determinar si es día o noche y asignar cuerpo celeste
             if (totalMinutes >= sunrise && totalMinutes < sunset) {
                 gradient = 'linear-gradient(to bottom, #87cefa, #4682b4)';
-                celestial.textContent = '☀️'; // Sol
+                celestial.textContent = '☀️';
             } else {
                 gradient = 'linear-gradient(to bottom, #191970, #000080)';
-                celestial.textContent = '🌙'; // Luna
+                celestial.textContent = '🌙';
             }
             document.body.style.background = gradient;
 
-            // Calcular progreso en el día o la noche
             let progress;
             if (totalMinutes >= sunrise && totalMinutes < sunset) {
-                progress = (totalMinutes - sunrise) / dayLength; // Progreso del día
+                progress = (totalMinutes - sunrise) / dayLength;
             } else {
                 const nightMinutes = totalMinutes < sunrise 
                     ? totalMinutes + (1440 - sunset) 
                     : totalMinutes - sunset;
-                progress = nightMinutes / nightLength; // Progreso de la noche
+                progress = nightMinutes / nightLength;
             }
             progress = Math.max(0, Math.min(1, progress));
 
-            // Obtener dimensiones del contenedor para evitarlo
             const container = document.querySelector('.container');
             const containerRect = container.getBoundingClientRect();
-            const containerWidth = containerRect.width / window.innerWidth * 100; // % en vw
-            const containerHeight = containerRect.height / window.innerHeight * 100; // % en vh
+            const containerWidth = containerRect.width / window.innerWidth * 100;
+            const containerHeight = containerRect.height / window.innerHeight * 100;
             const containerLeft = containerRect.left / window.innerWidth * 100;
             const containerTop = containerRect.top / window.innerHeight * 100;
             const containerRight = containerLeft + containerWidth;
             const containerBottom = containerTop + containerHeight;
 
-            // Definir trayectoria parabólica
-            const startX = 0; // Esquina inferior izquierda
-            const endX = 100; // Esquina inferior derecha
-            const startY = 100; // Parte inferior de la pantalla
-            const endY = 100; // Parte inferior de la pantalla
-            const maxHeight = containerTop - 20; // Altura máxima ajustada más abajo (antes era -30)
+            const startX = 0;
+            const endX = 100;
+            const startY = 100;
+            const endY = 100;
+            const maxHeight = containerTop - 20;
 
-            // Calcular posición X (lineal de izquierda a derecha)
             const leftPosition = startX + (endX - startX) * progress;
-
-            // Calcular posición Y (parábola que evita el contenedor)
-            const h = 50; // Punto medio en X
-            const a = (startY - maxHeight) / Math.pow(h - startX, 2); // Coeficiente parabólico
+            const h = 50;
+            const a = (startY - maxHeight) / Math.pow(h - startX, 2);
             const topPosition = a * Math.pow(leftPosition - h, 2) + maxHeight;
 
-            // Aplicar posición al cuerpo celeste
             celestial.style.left = `${leftPosition}vw`;
             celestial.style.top = `${topPosition}vh`;
             celestial.style.display = 'block';
@@ -417,6 +462,63 @@
             updateCountdown();
         });
 
+        function findClosestBusTimes(inputTime) {
+            const [inputHours, inputMinutes] = inputTime.split(':').map(Number);
+            const targetTimeInMinutes = inputHours * 60 + inputMinutes; // Hora objetivo (llegada al trabajo)
+            const maxDelayMinutes = 30; // Máximo 30 minutos de retraso
+
+            const schedule = grosvenorToHQSchedule.map(item => ({
+                gros: item.gros,
+                hq: item.hq,
+                grosMinutes: item.gros.split(':').map(Number)[0] * 60 + item.gros.split(':').map(Number)[1],
+                hqMinutes: item.hq.split(':').map(Number)[0] * 60 + item.hq.split(':').map(Number)[1]
+            }));
+
+            // Agregar el primer horario del día siguiente para manejar casos cercanos a medianoche
+            schedule.push({
+                gros: schedule[0].gros,
+                hq: schedule[0].hq,
+                grosMinutes: schedule[0].grosMinutes + 1440,
+                hqMinutes: schedule[0].hqMinutes + 1440
+            });
+
+            // Filtrar horarios válidos basados en la hora de llegada a HQ
+            const validTimes = schedule.filter(item => {
+                const diff = item.hqMinutes - targetTimeInMinutes;
+                return diff >= 0 && diff <= maxDelayMinutes;
+            });
+
+            // Ordenar por hora de salida (gros) de forma ascendente
+            validTimes.sort((a, b) => a.grosMinutes - b.grosMinutes);
+
+            return validTimes.slice(0, 3).map(item => ({ gros: item.gros, hq: item.hq }));
+        }
+
+        document.getElementById('playButton').addEventListener('click', function() {
+            const input = document.getElementById('busTimeInput').value.trim();
+            const closestTimesDiv = document.getElementById('closestTimes');
+
+            const timeRegex = /^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/;
+            if (!timeRegex.test(input)) {
+                closestTimesDiv.textContent = '';
+                return;
+            }
+
+            const closestTimes = findClosestBusTimes(input);
+            if (closestTimes.length === 0) {
+                closestTimesDiv.textContent = '';
+            } else {
+                const result = closestTimes.map(item => `${item.gros} ➡️ ${item.hq}`).join(', ');
+                closestTimesDiv.textContent = result;
+            }
+        });
+
+        document.getElementById('busTimeInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                document.getElementById('playButton').click();
+            }
+        });
+
         window.onload = function() {
             generateRandomDune();
             document.body.style.height = window.innerHeight + 'px';
@@ -430,3 +532,4 @@
     </script>
 </body>
 </html>
+```​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​
