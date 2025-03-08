@@ -88,9 +88,9 @@
             font-size: 60px;
             position: absolute;
             transition: all 1s ease;
-            z-index: 3; /* Aumentado para estar por encima del contenedor */
-            opacity: 1; /* Asegurar visibilidad */
-            pointer-events: none; /* Evitar interferencia con clics */
+            z-index: 3; /* Por encima del contenedor */
+            opacity: 1;
+            pointer-events: none;
         }
         .dunes {
             position: absolute;
@@ -114,6 +114,27 @@
         #toggleRoute:hover {
             transform: rotate(180deg);
         }
+        /* Estilos para las estrellas */
+        .stars-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 75vh; /* Limitar a la parte superior, dejando las dunas libres */
+            z-index: 0; /* Por debajo de las dunas */
+            pointer-events: none;
+        }
+        .star {
+            position: absolute;
+            background-color: rgba(255, 255, 255, 0.3); /* Baja opacidad */
+            border-radius: 50%;
+            animation: fade 3s infinite;
+        }
+        @keyframes fade {
+            0% { opacity: 0.3; }
+            50% { opacity: 0.1; }
+            100% { opacity: 0.3; }
+        }
     </style>
 </head>
 <body>
@@ -135,6 +156,7 @@
     <svg class="dunes" viewBox="0 0 1000 250" preserveAspectRatio="none">
         <path id="dunePath" fill="rgba(237, 201, 175, 0.4)" />
     </svg>
+    <div class="stars-container" id="starsContainer"></div> <!-- Contenedor para las estrellas -->
 
     <script>
         let dunePoints = [];
@@ -278,20 +300,14 @@
             progress = Math.max(0, Math.min(1, progress));
 
             // Position calculations
-            // X: Linear from 0vw (left) to 100vw (right)
             const leftPosition = progress * 100;
+            const maxHeight = 100;
+            const x = progress - 0.5;
+            const topPosition = 4 * maxHeight * x * x;
 
-            // Y: Parabolic path with peak at the top center
-            // Formula: y = 4h * (x - 0.5)^2, where h is the height at the bottom (100vh),
-            // and the peak (0vh) occurs at x = 0.5
-            const maxHeight = 100; // From bottom (100vh) to top (0vh)
-            const x = progress - 0.5; // Center the parabola at 0.5 (50vw)
-            const topPosition = 4 * maxHeight * x * x; // Parabola equation
-
-            // Apply positions
             celestial.style.top = `${topPosition}vh`;
             celestial.style.left = `${leftPosition}vw`;
-            celestial.style.display = 'block'; // Ensure visibility
+            celestial.style.display = 'block';
         }
 
         function updateCountdown() {
@@ -339,6 +355,33 @@
             updateSkyAndCelestial();
         }
 
+        // Función para generar estrellas
+        function createStars() {
+            const starsContainer = document.getElementById('starsContainer');
+            const numberOfStars = 50; // Ajusta la cantidad de estrellas
+
+            for (let i = 0; i < numberOfStars; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+
+                // Posición aleatoria
+                const x = Math.random() * 100; // 0% a 100% del ancho
+                const y = Math.random() * 75; // 0% a 75% de la altura (por encima de las dunas)
+                const size = Math.random() * 3 + 1; // Tamaño entre 1px y 4px
+
+                star.style.left = `${x}vw`;
+                star.style.top = `${y}vh`;
+                star.style.width = `${size}px`;
+                star.style.height = `${size}px`;
+
+                // Retardo aleatorio para la animación
+                const delay = Math.random() * 3; // Retardo entre 0 y 3 segundos
+                star.style.animationDelay = `${delay}s`;
+
+                starsContainer.appendChild(star);
+            }
+        }
+
         document.getElementById('toggleRoute').addEventListener('click', function() {
             isGrosvenorToHQ = !isGrosvenorToHQ;
             const routeTitle = document.getElementById('routeTitle');
@@ -358,7 +401,8 @@
             generateRandomDune();
             document.body.style.height = window.innerHeight + 'px';
             window.scrollTo(0, 0);
-            updateSkyAndCelestial(); // Posicionamiento inicial
+            updateSkyAndCelestial();
+            createStars(); // Generar las estrellas al cargar la página
         };
 
         setInterval(updateCountdown, 100);
