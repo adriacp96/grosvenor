@@ -2,17 +2,13 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <!-- Essential meta tags for iOS web app -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <title>Cuenta Regresiva Autobús</title>
-    <!-- Optional: Add an icon for the home screen -->
+    <title>Grosvenor</title>
     <link rel="apple-touch-icon" href="https://example.com/icon.png"> <!-- Replace with your icon URL -->
-    <!-- Optional: Startup image -->
     <link rel="apple-touch-startup-image" href="https://example.com/splash.png"> <!-- Replace with your splash URL -->
     <style>
-        /* Adjust body for full-screen */
         html, body {
             height: 100%;
             width: 100%;
@@ -100,13 +96,6 @@
             z-index: 1;
             pointer-events: none;
         }
-        #camel {
-            position: absolute;
-            font-size: 40px;
-            z-index: 2;
-            transition: left 0.1s linear, bottom 0.1s linear;
-            transform: scaleX(1);
-        }
     </style>
 </head>
 <body>
@@ -127,7 +116,6 @@
     <svg class="dunes" viewBox="0 0 1000 250" preserveAspectRatio="none">
         <path id="dunePath" fill="rgba(237, 201, 175, 0.4)" />
     </svg>
-    <div id="camel">🐫</div>
 
     <script>
         let dunePoints = [];
@@ -173,21 +161,6 @@
                 }
             }
             return 250;
-        }
-
-        let camelX = 1000;
-        function updateCamel() {
-            const camel = document.getElementById("camel");
-            const svgHeight = 25;
-            const y = getDuneHeight(camelX);
-            const bottom = (250 - y) / 250 * svgHeight;
-            const fontSizeInVh = 40 / window.innerHeight * 100;
-            const baselineOffset = fontSizeInVh * 0.4;
-            camel.style.left = `${camelX / 1000 * 100}vw`;
-            camel.style.bottom = `${bottom - baselineOffset}vh`;
-            camel.style.transform = "scaleX(1)";
-            camelX -= 1;
-            if (camelX < 0) camelX = 1000;
         }
 
         const busSchedule = [
@@ -315,13 +288,10 @@
             document.getElementById('busEmoji').style.left = `${busPosition}px`;
             
             updateSkyAndCelestial();
-            updateCamel();
         }
 
         window.onload = function() {
             generateRandomDune();
-            updateCamel();
-            // Ensure full-screen on iOS
             document.body.style.height = window.innerHeight + 'px';
             window.scrollTo(0, 0);
         };
