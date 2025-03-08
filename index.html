@@ -99,16 +99,15 @@
         #toggleRoute {
             margin-top: 20px;
             padding: 10px 20px;
-            font-size: 1em;
-            background-color: #2c3e50;
-            color: white;
+            font-size: 1.5em; /* Aumentado el tamaño para el emoji */
+            background-color: transparent; /* Fondo transparente */
+            color: #2c3e50; /* Color oscuro para el emoji */
             border: none;
-            border-radius: 5px;
             cursor: pointer;
-            transition: background-color 0.3s;
+            transition: transform 0.3s; /* Cambiado a transform para rotación */
         }
         #toggleRoute:hover {
-            background-color: #34495e;
+            transform: rotate(180deg); /* Rotación en hover en lugar de cambio de color */
         }
     </style>
 </head>
@@ -125,7 +124,7 @@
             </div>
             <div class="bus-emoji" id="busEmoji">🚌</div>
         </div>
-        <button id="toggleRoute">↔</button>
+        <button id="toggleRoute">🔄</button>
     </div>
     <div id="celestialBody">☀️</div>
     <svg class="dunes" viewBox="0 0 1000 250" preserveAspectRatio="none">
@@ -352,10 +351,10 @@
             
             if (isGrosvenorToHQ) {
                 routeTitle.textContent = "Grosvenor to HQ in";
-                toggleButton.textContent = "↔";
+                toggleButton.textContent = "🔄";
             } else {
                 routeTitle.textContent = "HQ to Grosvenor in";
-                toggleButton.textContent = "↔";
+                toggleButton.textContent = "🔄";
             }
             updateCountdown();
         });
