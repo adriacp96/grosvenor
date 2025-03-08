@@ -88,9 +88,9 @@
             font-size: 60px;
             position: absolute;
             transition: all 1s ease;
-            z-index: 1;
-            opacity: 1;
-            pointer-events: none;
+            z-index: 3; /* Aumentado para estar por encima del contenedor */
+            opacity: 1; /* Asegurar visibilidad */
+            pointer-events: none; /* Evitar interferencia con clics */
         }
         .dunes {
             position: absolute;
@@ -113,21 +113,6 @@
         }
         #toggleRoute:hover {
             transform: rotate(180deg);
-        }
-        .star {
-            position: absolute;
-            width: 3px;
-            height: 3px;
-            background: rgba(255, 255, 255, 0.5);
-            border-radius: 50%;
-            pointer-events: none;
-            z-index: 1.5; /* Mayor que las dunas (1) pero menor que el contenedor (2) */
-            animation: fadeStar 3s ease-in-out infinite;
-        }
-        @keyframes fadeStar {
-            0% { opacity: 0; }
-            50% { opacity: 0.5; }
-            100% { opacity: 0; }
         }
     </style>
 </head>
@@ -248,27 +233,6 @@
             return { previousBus, nextBus };
         }
 
-        function createStar() {
-            const star = document.createElement('div');
-            star.className = 'star';
-            star.style.left = `${Math.random() * 100}vw`;
-            star.style.top = `${Math.random() * 75}vh`; // Limitado al 75% superior para evitar las dunas
-            
-            const duration = 2 + Math.random() * 2;
-            star.style.animationDuration = `${duration}s`;
-            
-            star.addEventListener('animationend', () => {
-                star.remove();
-            });
-            
-            document.body.appendChild(star);
-        }
-
-        function clearStars() {
-            const stars = document.querySelectorAll('.star');
-            stars.forEach(star => star.remove());
-        }
-
         function updateSkyAndCelestial() {
             const now = new Date();
             const hours = now.getHours();
@@ -277,65 +241,57 @@
             const celestial = document.getElementById('celestialBody');
             let gradient;
 
+            // Dubai sunrise/sunset times (approximate averages)
             if (hours >= 5 && hours < 7) {
                 gradient = 'linear-gradient(to bottom, #ff8c5a, #ffd700)';
                 celestial.textContent = '☀️';
-                clearStars();
             } else if (hours >= 7 && hours < 17) {
                 gradient = 'linear-gradient(to bottom, #87cefa, #4682b4)';
                 celestial.textContent = '☀️';
-                clearStars();
             } else if (hours >= 17 && hours < 19) {
                 gradient = 'linear-gradient(to bottom, #ff4500, #8b0000)';
                 celestial.textContent = '☀️';
-                clearStars();
             } else {
                 gradient = 'linear-gradient(to bottom, #191970, #000080)';
                 celestial.textContent = '🌙';
-                if (Math.random() < 0.05) { // Reducido de 0.5 a 0.05 para menos estrellas
-                    createStar();
-                }
             }
 
             document.body.style.background = gradient;
 
+            // Calculate progress (0 to 1) across the day/night
             let progress;
-            const sunrise = 6.5 * 60;
-            const sunset = 18.5 * 60;
+            const sunrise = 6.5 * 60;  // 6:30 AM in minutes
+            const sunset = 18.5 * 60;  // 6:30 PM in minutes
             const dayLength = sunset - sunrise;
             const nightLength = 1440 - dayLength;
 
             if (hours >= 6.5 && hours < 18.5) {
+                // Daytime (sun movement)
                 progress = (totalMinutes - sunrise) / dayLength;
             } else {
+                // Nighttime (moon movement)
                 const nightMinutes = totalMinutes < sunrise ? totalMinutes + (1440 - sunset) : totalMinutes - sunset;
                 progress = nightMinutes / nightLength;
             }
 
+            // Ensure progress stays between 0 and 1
             progress = Math.max(0, Math.min(1, progress));
 
+            // Position calculations
+            // X: Linear from 0vw (left) to 100vw (right)
             const leftPosition = progress * 100;
-            const maxHeight = 90;
-            const minHeight = 10;
-            const x = progress - 0.5;
-            const topPosition = 4 * maxHeight * x * x + minHeight;
 
-            const container = document.querySelector('.container');
-            const containerRect = container.getBoundingClientRect();
-            const containerTop = containerRect.top / window.innerHeight * 100;
-            const containerBottom = containerRect.bottom / window.innerHeight * 100;
-            const containerLeft = containerRect.left / window.innerWidth * 100;
-            const containerRight = containerRect.right / window.innerWidth * 100;
+            // Y: Parabolic path with peak at the top center
+            // Formula: y = 4h * (x - 0.5)^2, where h is the height at the bottom (100vh),
+            // and the peak (0vh) occurs at x = 0.5
+            const maxHeight = 100; // From bottom (100vh) to top (0vh)
+            const x = progress - 0.5; // Center the parabola at 0.5 (50vw)
+            const topPosition = 4 * maxHeight * x * x; // Parabola equation
 
-            let adjustedTop = topPosition;
-            if (topPosition + 5 > containerTop && topPosition < containerBottom &&
-                leftPosition > containerLeft - 10 && leftPosition < containerRight + 10) {
-                adjustedTop = containerTop - 10;
-            }
-
-            celestial.style.top = `${adjustedTop}vh`;
+            // Apply positions
+            celestial.style.top = `${topPosition}vh`;
             celestial.style.left = `${leftPosition}vw`;
-            celestial.style.display = 'block';
+            celestial.style.display = 'block'; // Ensure visibility
         }
 
         function updateCountdown() {
@@ -402,7 +358,7 @@
             generateRandomDune();
             document.body.style.height = window.innerHeight + 'px';
             window.scrollTo(0, 0);
-            updateSkyAndCelestial();
+            updateSkyAndCelestial(); // Posicionamiento inicial
         };
 
         setInterval(updateCountdown, 100);
