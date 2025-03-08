@@ -4,24 +4,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="theme-color" content="#191970">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <title>Grosvenor</title>
     <link rel="apple-touch-icon" href="https://img.icons8.com/?size=100&id=fRKgJhBjMqCd&format=png&color=000000">
     <link rel="apple-touch-startup-image" href="https://example.com/splash.png">
     <style>
-        * {
+        html, body {
+            height: 100vh;
+            width: 100vw;
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
-        }
-        html, body {
-            height: 100%;
-            width: 100%;
             overflow: hidden;
+            position: fixed;
+            top: 0;
+            left: 0;
             background: #191970;
-            -webkit-text-size-adjust: 100%;
-            -webkit-tap-highlight-color: transparent;
         }
         body {
             font-family: Helvetica, Arial, sans-serif;
@@ -29,23 +26,25 @@
             justify-content: center;
             align-items: center;
             transition: background 1s ease;
+            position: relative;
             background-size: cover;
             background-position: center;
-            padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+            padding-top: env(safe-area-inset-top);
+            padding-bottom: env(safe-area-inset-bottom);
         }
         .emirates-logo {
-            position: absolute; /* Cambiado de fixed a absolute para alinearse con el body */
-            bottom: 0; /* Pegado al fondo */
+            position: fixed;
+            bottom: 20px;
             left: 50%;
             transform: translateX(-50%);
             z-index: 3;
             width: 60px;
             height: 60px;
             object-fit: cover;
-            border-radius: 10px 10px 0 0; /* Bordes superiores redondeados, inferiores no */
-            box-shadow: 0 0 10px rgba(0,0,0,0.3);
+            object-position: center;
             opacity: 0.9;
-            margin-bottom: env(safe-area-inset-bottom); /* Espacio para el notch inferior */
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.3);
         }
         .container {
             text-align: center;
@@ -54,10 +53,17 @@
             border-radius: 10px;
             box-shadow: 0 0 10px rgba(0,0,0,0.3);
             z-index: 2;
-            max-width: 90%;
+            position: relative;
         }
-        #countdown { font-size: 2.5em; color: #2c3e50; margin: 20px 0; }
-        #nextBus { font-size: 1.2em; color: #7f8c8d; }
+        #countdown {
+            font-size: 2.5em;
+            color: #2c3e50;
+            margin: 20px 0;
+        }
+        #nextBus {
+            font-size: 1.2em;
+            color: #7f8c8d;
+        }
         .progress-container {
             width: 300px;
             margin: 20px auto;
@@ -68,6 +74,7 @@
             height: 10px;
             background-color: #ddd;
             border-radius: 5px;
+            position: relative;
             overflow: hidden;
         }
         .progress-fill {
@@ -95,13 +102,12 @@
         }
         .dunes {
             position: absolute;
-            bottom: 0; /* Pegado al fondo */
+            bottom: 0;
             left: 0;
             width: 100%;
             height: 25vh;
             z-index: 1;
             pointer-events: none;
-            margin-bottom: env(safe-area-inset-bottom); /* Ajuste para el notch */
         }
         #toggleRoute {
             margin-top: 20px;
@@ -112,9 +118,10 @@
             border: none;
             cursor: pointer;
             transition: transform 0.3s;
-            touch-action: manipulation;
         }
-        #toggleRoute:hover { transform: rotate(180deg); }
+        #toggleRoute:hover {
+            transform: rotate(180deg);
+        }
         .stars-container {
             position: absolute;
             top: 0;
@@ -256,8 +263,9 @@
         }
 
         function updateSkyAndCelestial() {
+            // Obtener hora actual en Dubái (UTC+4)
             const now = new Date();
-            const utcOffset = 4 * 60;
+            const utcOffset = 4 * 60; // Dubái está en UTC+4
             const dubaiTime = new Date(now.getTime() + utcOffset * 60 * 1000);
             const hours = dubaiTime.getHours();
             const minutes = dubaiTime.getMinutes();
@@ -266,51 +274,60 @@
             const celestial = document.getElementById('celestialBody');
             let gradient;
 
-            const sunrise = 6.5 * 60;
-            const sunset = 18.5 * 60;
-            const dayLength = sunset - sunrise;
-            const nightLength = 1440 - dayLength;
+            // Horarios aproximados de amanecer y atardecer en Dubái (ajustados a marzo)
+            const sunrise = 6.5 * 60; // 06:30
+            const sunset = 18.5 * 60; // 18:30
+            const dayLength = sunset - sunrise; // Duración del día
+            const nightLength = 1440 - dayLength; // Duración de la noche
 
+            // Determinar si es día o noche y asignar cuerpo celeste
             if (totalMinutes >= sunrise && totalMinutes < sunset) {
                 gradient = 'linear-gradient(to bottom, #87cefa, #4682b4)';
-                celestial.textContent = '☀️';
+                celestial.textContent = '☀️'; // Sol
             } else {
                 gradient = 'linear-gradient(to bottom, #191970, #000080)';
-                celestial.textContent = '🌙';
+                celestial.textContent = '🌙'; // Luna
             }
             document.body.style.background = gradient;
 
+            // Calcular progreso en el día o la noche
             let progress;
             if (totalMinutes >= sunrise && totalMinutes < sunset) {
-                progress = (totalMinutes - sunrise) / dayLength;
+                progress = (totalMinutes - sunrise) / dayLength; // Progreso del día
             } else {
                 const nightMinutes = totalMinutes < sunrise 
                     ? totalMinutes + (1440 - sunset) 
                     : totalMinutes - sunset;
-                progress = nightMinutes / nightLength;
+                progress = nightMinutes / nightLength; // Progreso de la noche
             }
             progress = Math.max(0, Math.min(1, progress));
 
+            // Obtener dimensiones del contenedor para evitarlo
             const container = document.querySelector('.container');
             const containerRect = container.getBoundingClientRect();
-            const containerWidth = containerRect.width / window.innerWidth * 100;
-            const containerHeight = containerRect.height / window.innerHeight * 100;
+            const containerWidth = containerRect.width / window.innerWidth * 100; // % en vw
+            const containerHeight = containerRect.height / window.innerHeight * 100; // % en vh
             const containerLeft = containerRect.left / window.innerWidth * 100;
             const containerTop = containerRect.top / window.innerHeight * 100;
             const containerRight = containerLeft + containerWidth;
             const containerBottom = containerTop + containerHeight;
 
-            const startX = 0;
-            const endX = 100;
-            const startY = 100;
-            const endY = 100;
-            const maxHeight = containerTop - 20;
+            // Definir trayectoria parabólica
+            const startX = 0; // Esquina inferior izquierda
+            const endX = 100; // Esquina inferior derecha
+            const startY = 100; // Parte inferior de la pantalla
+            const endY = 100; // Parte inferior de la pantalla
+            const maxHeight = containerTop - 20; // Altura máxima ajustada más abajo (antes era -30)
 
+            // Calcular posición X (lineal de izquierda a derecha)
             const leftPosition = startX + (endX - startX) * progress;
-            const h = 50;
-            const a = (startY - maxHeight) / Math.pow(h - startX, 2);
+
+            // Calcular posición Y (parábola que evita el contenedor)
+            const h = 50; // Punto medio en X
+            const a = (startY - maxHeight) / Math.pow(h - startX, 2); // Coeficiente parabólico
             const topPosition = a * Math.pow(leftPosition - h, 2) + maxHeight;
 
+            // Aplicar posición al cuerpo celeste
             celestial.style.left = `${leftPosition}vw`;
             celestial.style.top = `${topPosition}vh`;
             celestial.style.display = 'block';
@@ -402,7 +419,7 @@
 
         window.onload = function() {
             generateRandomDune();
-            if (navigator.standalone) document.documentElement.style.height = '100vh';
+            document.body.style.height = window.innerHeight + 'px';
             window.scrollTo(0, 0);
             updateSkyAndCelestial();
             createStars();
