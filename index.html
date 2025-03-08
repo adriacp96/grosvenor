@@ -4,36 +4,33 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <title>Grosvenor</title>
     <link rel="apple-touch-icon" href="https://img.icons8.com/?size=100&id=fRKgJhBjMqCd&format=png&color=000000">
     <link rel="apple-touch-startup-image" href="https://example.com/splash.png">
-    <link rel="manifest" href="/manifest.json">
     <style>
-        html {
-            height: 100vh; /* Usamos vh para máxima compatibilidad */
-            height: -webkit-fill-available; /* Soluciona problemas de altura en iOS */
-            margin: 0;
-            padding: 0;
-        }
-        body {
-            height: 100vh; /* Aseguramos que el body ocupe toda la pantalla */
-            height: -webkit-fill-available;
-            width: 100%;
+        html, body {
+            height: 100vh;
+            width: 100vw;
             margin: 0;
             padding: 0;
             overflow: hidden;
             position: fixed;
             top: 0;
             left: 0;
-            background: #191970; /* Fallback color */
+            background: #191970;
+        }
+        body {
             font-family: Helvetica, Arial, sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
             transition: background 1s ease;
+            position: relative;
             background-size: cover;
             background-position: center;
+            padding-top: env(safe-area-inset-top);
+            padding-bottom: env(safe-area-inset-bottom);
         }
         .emirates-logo {
             position: fixed;
@@ -62,7 +59,6 @@
             font-size: 2.5em;
             color: #2c3e50;
             margin: 20px 0;
-            aria-live: polite;
         }
         #nextBus {
             font-size: 1.2em;
@@ -105,17 +101,13 @@
             pointer-events: none;
         }
         .dunes {
-            position: fixed;
-            top: 0; /* Extendemos desde la parte superior */
-            bottom: 0; /* Hasta la parte inferior */
+            position: absolute;
+            bottom: 0;
             left: 0;
             width: 100%;
-            height: 100%; /* Ocupa toda la altura */
+            height: 25vh;
             z-index: 1;
             pointer-events: none;
-        }
-        #dunePath {
-            transform: translateY(75%); /* Mantiene las dunas en la parte inferior */
         }
         #toggleRoute {
             margin-top: 20px;
@@ -131,12 +123,11 @@
             transform: rotate(180deg);
         }
         .stars-container {
-            position: fixed;
+            position: absolute;
             top: 0;
-            bottom: 0; /* Aseguramos que llegue al fondo */
             left: 0;
             width: 100%;
-            height: 100%; /* Cubre toda la pantalla */
+            height: 75vh;
             z-index: 0;
             pointer-events: none;
         }
@@ -272,8 +263,9 @@
         }
 
         function updateSkyAndCelestial() {
+            // Obtener hora actual en Dubái (UTC+4)
             const now = new Date();
-            const utcOffset = 4 * 60; // Dubai UTC+4
+            const utcOffset = 4 * 60; // Dubái está en UTC+4
             const dubaiTime = new Date(now.getTime() + utcOffset * 60 * 1000);
             const hours = dubaiTime.getHours();
             const minutes = dubaiTime.getMinutes();
@@ -282,49 +274,60 @@
             const celestial = document.getElementById('celestialBody');
             let gradient;
 
+            // Horarios aproximados de amanecer y atardecer en Dubái (ajustados a marzo)
             const sunrise = 6.5 * 60; // 06:30
             const sunset = 18.5 * 60; // 18:30
-            const dayLength = sunset - sunrise;
-            const nightLength = 1440 - dayLength;
+            const dayLength = sunset - sunrise; // Duración del día
+            const nightLength = 1440 - dayLength; // Duración de la noche
 
+            // Determinar si es día o noche y asignar cuerpo celeste
             if (totalMinutes >= sunrise && totalMinutes < sunset) {
                 gradient = 'linear-gradient(to bottom, #87cefa, #4682b4)';
-                celestial.textContent = '☀️';
+                celestial.textContent = '☀️'; // Sol
             } else {
                 gradient = 'linear-gradient(to bottom, #191970, #000080)';
-                celestial.textContent = '🌙';
+                celestial.textContent = '🌙'; // Luna
             }
             document.body.style.background = gradient;
 
+            // Calcular progreso en el día o la noche
             let progress;
             if (totalMinutes >= sunrise && totalMinutes < sunset) {
-                progress = (totalMinutes - sunrise) / dayLength;
+                progress = (totalMinutes - sunrise) / dayLength; // Progreso del día
             } else {
                 const nightMinutes = totalMinutes < sunrise 
                     ? totalMinutes + (1440 - sunset) 
                     : totalMinutes - sunset;
-                progress = nightMinutes / nightLength;
+                progress = nightMinutes / nightLength; // Progreso de la noche
             }
             progress = Math.max(0, Math.min(1, progress));
 
+            // Obtener dimensiones del contenedor para evitarlo
             const container = document.querySelector('.container');
             const containerRect = container.getBoundingClientRect();
-            const containerWidth = containerRect.width / window.innerWidth * 100;
-            const containerHeight = containerRect.height / window.innerHeight * 100;
+            const containerWidth = containerRect.width / window.innerWidth * 100; // % en vw
+            const containerHeight = containerRect.height / window.innerHeight * 100; // % en vh
             const containerLeft = containerRect.left / window.innerWidth * 100;
             const containerTop = containerRect.top / window.innerHeight * 100;
+            const containerRight = containerLeft + containerWidth;
+            const containerBottom = containerTop + containerHeight;
 
-            const startX = 0;
-            const endX = 100;
-            const startY = 100;
-            const endY = 100;
-            const maxHeight = containerTop - (celestial.offsetHeight / window.innerHeight * 100) - 5;
+            // Definir trayectoria parabólica
+            const startX = 0; // Esquina inferior izquierda
+            const endX = 100; // Esquina inferior derecha
+            const startY = 100; // Parte inferior de la pantalla
+            const endY = 100; // Parte inferior de la pantalla
+            const maxHeight = containerTop - 20; // Altura máxima ajustada más abajo (antes era -30)
 
+            // Calcular posición X (lineal de izquierda a derecha)
             const leftPosition = startX + (endX - startX) * progress;
-            const h = 50;
-            const a = (startY - maxHeight) / Math.pow(h - startX, 2);
+
+            // Calcular posición Y (parábola que evita el contenedor)
+            const h = 50; // Punto medio en X
+            const a = (startY - maxHeight) / Math.pow(h - startX, 2); // Coeficiente parabólico
             const topPosition = a * Math.pow(leftPosition - h, 2) + maxHeight;
 
+            // Aplicar posición al cuerpo celeste
             celestial.style.left = `${leftPosition}vw`;
             celestial.style.top = `${topPosition}vh`;
             celestial.style.display = 'block';
@@ -384,7 +387,7 @@
                 star.className = 'star';
 
                 const x = Math.random() * 100;
-                const y = Math.random() * 100; 
+                const y = Math.random() * 75;
                 const size = Math.random() * 3 + 1;
 
                 star.style.left = `${x}vw`;
@@ -416,8 +419,7 @@
 
         window.onload = function() {
             generateRandomDune();
-            document.body.style.height = '100vh'; /* Reforzamos la altura */
-            document.body.style.height = '-webkit-fill-available';
+            document.body.style.height = window.innerHeight + 'px';
             window.scrollTo(0, 0);
             updateSkyAndCelestial();
             createStars();
