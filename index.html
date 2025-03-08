@@ -79,6 +79,15 @@
             transition: all 1s ease;
             z-index: 1;
         }
+        .dunes {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 25vh; /* Aumenté un poco la altura para dar más espacio a las formas */
+            z-index: 1;
+            pointer-events: none;
+        }
     </style>
 </head>
 <body>
@@ -96,6 +105,20 @@
         </div>
     </div>
     <div id="celestialBody">☀️</div>
+    <svg class="dunes" viewBox="0 0 1000 200" preserveAspectRatio="none">
+        <!-- Duna 1 (fondo, grande y ondulada) -->
+        <path d="M0,200 C150,100 300,150 450,120 C600,90 750,130 900,110 L1000,200 H0 Z" 
+              fill="rgba(237, 201, 175, 0.3)" />
+        <!-- Duna 2 (media, delante, más pequeña y suave) -->
+        <path d="M200,200 C300,140 400,160 500,150 C600,140 700,160 800,150 L800,200 H200 Z" 
+              fill="rgba(237, 201, 175, 0.4)" />
+        <!-- Duna 3 (pequeña, delante, forma irregular) -->
+        <path d="M600,200 C650,170 700,190 750,180 C800,170 850,185 900,175 L900,200 H600 Z" 
+              fill="rgba(237, 201, 175, 0.5)" />
+        <!-- Duna 4 (fondo, baja y ancha) -->
+        <path d="M400,200 C500,160 600,180 700,170 C800,160 900,170 1000,165 L1000,200 H400 Z" 
+              fill="rgba(237, 201, 175, 0.25)" />
+    </svg>
 
     <script>
         const busSchedule = [
@@ -148,16 +171,16 @@
             let gradient;
 
             if (hours >= 5 && hours < 7) { // Amanecer en Dubái
-                gradient = 'linear-gradient(to bottom, #ff8c5a, #ffd700)'; // Naranja cálido a dorado
+                gradient = 'linear-gradient(to bottom, #ff8c5a, #ffd700)';
                 celestial.textContent = '☀️';
             } else if (hours >= 7 && hours < 17) { // Día en Dubái
-                gradient = 'linear-gradient(to bottom, #87cefa, #4682b4)'; // Azul claro polvoriento a azul acero
+                gradient = 'linear-gradient(to bottom, #87cefa, #4682b4)';
                 celestial.textContent = '☀️';
             } else if (hours >= 17 && hours < 19) { // Atardecer en Dubái
-                gradient = 'linear-gradient(to bottom, #ff4500, #8b0000)'; // Naranja intenso a rojo oscuro
+                gradient = 'linear-gradient(to bottom, #ff4500, #8b0000)';
                 celestial.textContent = '☀️';
             } else { // Noche en Dubái
-                gradient = 'linear-gradient(to bottom, #191970, #000080)'; // Azul medianoche a azul profundo
+                gradient = 'linear-gradient(to bottom, #191970, #000080)';
                 celestial.textContent = '🌙';
             }
 
