@@ -263,7 +263,7 @@
             const celestial = document.getElementById('celestialBody');
             let gradient;
 
-            // Dubai sunrise/sunset times (approximate averages)
+            // Determinar si es sol o luna y el fondo
             if (hours >= 5 && hours < 7) {
                 gradient = 'linear-gradient(to bottom, #ff8c5a, #ffd700)';
                 celestial.textContent = '☀️';
@@ -277,36 +277,67 @@
                 gradient = 'linear-gradient(to bottom, #191970, #000080)';
                 celestial.textContent = '🌙';
             }
-
             document.body.style.background = gradient;
 
-            // Calculate progress (0 to 1) across the day/night
+            // Calcular progreso del día/noche
             let progress;
-            const sunrise = 6.5 * 60;  // 6:30 AM in minutes
-            const sunset = 18.5 * 60;  // 6:30 PM in minutes
+            const sunrise = 6.5 * 60;  // 6:30 AM
+            const sunset = 18.5 * 60;  // 6:30 PM
             const dayLength = sunset - sunrise;
             const nightLength = 1440 - dayLength;
 
             if (hours >= 6.5 && hours < 18.5) {
-                // Daytime (sun movement)
                 progress = (totalMinutes - sunrise) / dayLength;
             } else {
-                // Nighttime (moon movement)
                 const nightMinutes = totalMinutes < sunrise ? totalMinutes + (1440 - sunset) : totalMinutes - sunset;
                 progress = nightMinutes / nightLength;
             }
-
-            // Ensure progress stays between 0 and 1
             progress = Math.max(0, Math.min(1, progress));
 
-            // Position calculations
-            const leftPosition = progress * 100;
-            const maxHeight = 100;
-            const x = progress - 0.5;
-            const topPosition = 4 * maxHeight * x * x;
+            // Obtener dimensiones y posición del contenedor
+            const container = document.querySelector('.container');
+            const containerRect = container.getBoundingClientRect();
+            const containerWidth = containerRect.width / window.innerWidth * 100; // En vw
+            const containerHeight = containerRect.height / window.innerHeight * 100; // En vh
+            const containerLeft = containerRect.left / window.innerWidth * 100; // En vw
+            const containerTop = containerRect.top / window.innerHeight * 100; // En vh
+            const containerRight = containerLeft + containerWidth;
+            const containerBottom = containerTop + containerHeight;
 
-            celestial.style.top = `${topPosition}vh`;
+            // Definir puntos clave de la trayectoria
+            const buffer = 5; // Margen alrededor del contenedor
+            const startX = 0; // Abajo a la izquierda de la pantalla
+            const startY = 100;
+            const endX = 100; // Abajo a la derecha de la pantalla
+            const endY = 100;
+            const peakX = 50; // Centro horizontal de la pantalla
+            const peakY = containerTop - buffer - 10; // Por encima del contenedor
+
+            // Ajustar la trayectoria para evitar el contenedor
+            let leftPosition, topPosition;
+            const t = progress;
+
+            // Posición horizontal: lineal de 0 a 100vw
+            leftPosition = startX + (endX - startX) * t;
+
+            // Ajustar la posición vertical para rodear el contenedor
+            if (leftPosition < containerLeft - buffer) {
+                // Antes del contenedor: parábola desde startY hasta cerca del contenedor
+                const localT = leftPosition / (containerLeft - buffer);
+                topPosition = startY - (startY - (containerBottom + buffer)) * (1 - Math.pow(1 - localT, 2));
+            } else if (leftPosition > containerRight + buffer) {
+                // Después del contenedor: parábola desde cerca del contenedor hasta endY
+                const localT = (leftPosition - (containerRight + buffer)) / (endX - (containerRight + buffer));
+                topPosition = (containerBottom + buffer) + (endY - (containerBottom + buffer)) * (1 - Math.pow(1 - localT, 2));
+            } else {
+                // Sobre el contenedor: mantenerse por encima con una parábola suave
+                const localT = (leftPosition - (containerLeft - buffer)) / (containerRight + buffer - (containerLeft - buffer));
+                const heightAbove = containerTop - buffer - 10; // Punto más alto
+                topPosition = containerBottom + buffer - (containerBottom + buffer - heightAbove) * (1 - Math.pow(1 - 2 * localT, 2));
+            }
+
             celestial.style.left = `${leftPosition}vw`;
+            celestial.style.top = `${topPosition}vh`;
             celestial.style.display = 'block';
         }
 
