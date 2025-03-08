@@ -88,6 +88,13 @@
             z-index: 1;
             pointer-events: none;
         }
+        #camel {
+            position: absolute;
+            font-size: 40px;
+            z-index: 2;
+            transition: left 0.1s linear, bottom 0.1s linear;
+            transform: scaleX(1); /* Default facing right */
+        }
     </style>
 </head>
 <body>
@@ -108,41 +115,79 @@
     <svg class="dunes" viewBox="0 0 1000 250" preserveAspectRatio="none">
         <path id="dunePath" fill="rgba(237, 201, 175, 0.4)" />
     </svg>
+    <div id="camel">🐫</div>
 
     <script>
+        let dunePoints = []; // Almacenar puntos de control de la duna
+
         // Generar duna aleatoria
         function generateRandomDune() {
-            const segments = 4; // Número de curvas Bézier para variedad
-            const width = 1000; // Ancho total del SVG
+            const segments = 4;
+            const width = 1000;
             const segmentWidth = width / segments;
-            let path = "M0,250"; // Inicio en la base izquierda
+            let path = "M0,250";
+            dunePoints = [{ x: 0, y: 250 }]; // Punto inicial
 
             for (let i = 1; i <= segments; i++) {
-                const x1 = (i - 0.66) * segmentWidth; // Primer punto de control
-                const y1 = 250 - Math.random() * 130; // Altura aleatoria (120 a 250)
-                const x2 = (i - 0.33) * segmentWidth; // Segundo punto de control
-                const y2 = 250 - Math.random() * 130; // Altura aleatoria
-                const x3 = i * segmentWidth; // Punto final de la curva
-                const y3 = 250 - Math.random() * 130; // Altura aleatoria (excepto en el último)
+                const x1 = (i - 0.66) * segmentWidth;
+                const y1 = 250 - Math.random() * 130;
+                const x2 = (i - 0.33) * segmentWidth;
+                const y2 = 250 - Math.random() * 130;
+                const x3 = i * segmentWidth;
+                const y3 = i === segments ? 250 : 250 - Math.random() * 130;
 
-                // Asegurar que el último punto esté en la base
-                if (i === segments) {
-                    path += ` C${x1},${y1} ${x2},${y2} ${width},250`;
-                } else {
-                    path += ` C${x1},${y1} ${x2},${y2} ${x3},${y3}`;
-                }
+                path += ` C${x1},${y1} ${x2},${y2} ${x3},${y3}`;
+                dunePoints.push({ x: x1, y: y1 }, { x: x2, y: y2 }, { x: x3, y: y3 });
             }
 
-            path += " L0,250 Z"; // Cerrar la forma volviendo a la base
+            path += " L0,250 Z";
             document.getElementById("dunePath").setAttribute("d", path);
         }
 
-        // Generar la duna al cargar la página
-        window.onload = function() {
-            generateRandomDune();
-        };
+        // Interpolación cúbica de Bézier para encontrar la altura en una posición x
+        function getBezierY(t, p0, p1, p2, p3) {
+            const mt = 1 - t;
+            return Math.pow(mt, 3) * p0.y + 3 * Math.pow(mt, 2) * t * p1.y + 
+                   3 * mt * Math.pow(t, 2) * p2.y + Math.pow(t, 3) * p3.y;
+        }
 
-        // Resto del código original (horario de autobuses, cielo, etc.)
+        // Encontrar la altura de la duna en una posición x
+        function getDuneHeight(x) {
+            for (let i = 0; i < dunePoints.length - 3; i += 3) {
+                const p0 = dunePoints[i];
+                const p1 = dunePoints[i + 1];
+                const p2 = dunePoints[i + 2];
+                const p3 = dunePoints[i + 3];
+                if (x >= p0.x && x <= p3.x) {
+                    const t = (x - p0.x) / (p3.x - p0.x);
+                    return getBezierY(t, p0, p1, p2, p3);
+                }
+            }
+            return 250; // Valor por defecto si x está fuera de rango
+        }
+
+        // Actualizar posición del camello
+        let camelX = 1000;
+        function updateCamel() {
+            const camel = document.getElementById("camel");
+            const svgHeight = 25; // Altura del SVG en vh
+            const y = getDuneHeight(camelX);
+            const bottom = (250 - y) / 250 * svgHeight; // Base calculation
+            
+            // Adjust to touch dunes but not too low
+            const camelHeightAdjustment = 0; // Base adjustment
+            const fontSizeInVh = 40 / window.innerHeight * 100; // Convert 40px to vh
+            const baselineOffset = fontSizeInVh * 0.4; // Kept at 0.4
+            camel.style.left = `${camelX / 1000 * 100}vw`;
+            camel.style.bottom = `${bottom - baselineOffset + camelHeightAdjustment}vh`;
+            
+            // Face right (flipped from previous left-facing)
+            camel.style.transform = "scaleX(1)";
+            
+            camelX -= 1; // Mover de derecha a izquierda
+            if (camelX < 0) camelX = 1000;
+        }
+
         const busSchedule = [
             "00:43", "01:03", "01:23", "01:43", "02:03", "02:23", "02:53", "03:23", "03:53", "04:23", "04:48", "05:08", 
             "05:28", "05:53", "06:13", "06:33", "06:53", "07:13", "07:38", "08:03", "08:28", "08:53", "09:18", "09:48", 
@@ -192,16 +237,16 @@
             const celestial = document.getElementById('celestialBody');
             let gradient;
 
-            if (hours >= 5 && hours < 7) { // Amanecer en Dubái
+            if (hours >= 5 && hours < 7) {
                 gradient = 'linear-gradient(to bottom, #ff8c5a, #ffd700)';
                 celestial.textContent = '☀️';
-            } else if (hours >= 7 && hours < 17) { // Día en Dubái
+            } else if (hours >= 7 && hours < 17) {
                 gradient = 'linear-gradient(to bottom, #87cefa, #4682b4)';
                 celestial.textContent = '☀️';
-            } else if (hours >= 17 && hours < 19) { // Atardecer en Dubái
+            } else if (hours >= 17 && hours < 19) {
                 gradient = 'linear-gradient(to bottom, #ff4500, #8b0000)';
                 celestial.textContent = '☀️';
-            } else { // Noche en Dubái
+            } else {
                 gradient = 'linear-gradient(to bottom, #191970, #000080)';
                 celestial.textContent = '🌙';
             }
@@ -270,7 +315,13 @@
             document.getElementById('busEmoji').style.left = `${busPosition}px`;
             
             updateSkyAndCelestial();
+            updateCamel();
         }
+
+        window.onload = function() {
+            generateRandomDune();
+            updateCamel(); // Set initial position and direction
+        };
 
         setInterval(updateCountdown, 100);
         updateCountdown();
