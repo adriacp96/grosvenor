@@ -181,7 +181,7 @@
         }
         #eGateButton {
             margin-top: 20px;
-            padding: 10px 20px;
+            padding: 0 20px; /* Eliminado padding vertical */
             font-size: 1.2em;
             background-color: #2c3e50;
             color: white;
@@ -190,7 +190,8 @@
             cursor: pointer;
             transition: background-color 0.3s, transform 0.3s;
             width: 100px;
-            height: 40px;
+            height: 24px; /* Igualado al font-size del emoji */
+            line-height: 24px; /* Centrado vertical del texto */
             box-sizing: border-box;
         }
         #eGateButton:hover {
@@ -525,7 +526,7 @@
             const eGateButton = document.getElementById('eGateButton');
             eGateButton.style.display = 'inline-block';
             eGateButton.style.width = '100px';
-            eGateButton.style.height = '40px';
+            eGateButton.style.height = '24px'; /* Aseguramos que mantenga la altura al volver a mostrarse */
         });
 
         document.getElementById('busTimeInput').addEventListener('change', function() {
