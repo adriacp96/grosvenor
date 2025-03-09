@@ -144,7 +144,7 @@
         }
         .input-container {
             margin-top: 20px;
-            display: none; /* Ocultar inicialmente */
+            display: none;
             justify-content: center;
             align-items: center;
             gap: 10px;
@@ -177,7 +177,7 @@
             margin-top: 10px;
             font-size: 1.1em;
             color: #2c3e50;
-            display: none; /* Ocultar inicialmente */
+            display: none;
         }
         #eGateButton {
             margin-top: 20px;
@@ -214,7 +214,7 @@
         <div class="input-container">
             <span>eGate</span>
             <input type="time" id="busTimeInput">
-            <button id="playButton">▶</button>
+            <button id="playButton">✕</button>
         </div>
         <div id="closestTimes"></div>
     </div>
@@ -227,6 +227,7 @@
     <script>
         let dunePoints = [];
         let isGrosvenorToHQ = true;
+        let starsCreated = false;
 
         const grosvenorToHQSchedule = [
             { gros: "00:43", hq: "01:03" }, { gros: "01:03", hq: "01:23" }, { gros: "01:23", hq: "01:43" },
@@ -345,6 +346,7 @@
             const totalMinutes = hours * 60 + minutes;
 
             const celestial = document.getElementById('celestialBody');
+            const starsContainer = document.getElementById('starsContainer');
             let gradient;
 
             const sunrise = 6.5 * 60;
@@ -355,9 +357,15 @@
             if (totalMinutes >= sunrise && totalMinutes < sunset) {
                 gradient = 'linear-gradient(to bottom, #87cefa, #4682b4)';
                 celestial.textContent = '☀️';
+                starsContainer.style.display = 'none';
             } else {
                 gradient = 'linear-gradient(to bottom, #191970, #000080)';
                 celestial.textContent = '🌙';
+                starsContainer.style.display = 'block';
+                if (!starsCreated) {
+                    createStars();
+                    starsCreated = true;
+                }
             }
             document.body.style.background = gradient;
 
@@ -483,8 +491,8 @@
 
         function findClosestBusTimes(inputTime) {
             const [inputHours, inputMinutes] = inputTime.split(':').map(Number);
-            const targetTimeInMinutes = inputHours * 60 + inputMinutes; // Hora objetivo (llegada al trabajo)
-            const maxDelayMinutes = 30; // Máximo 30 minutos de retraso
+            const targetTimeInMinutes = inputHours * 60 + inputMinutes;
+            const maxDelayMinutes = 30;
 
             const schedule = grosvenorToHQSchedule.map(item => ({
                 gros: item.gros,
@@ -493,7 +501,6 @@
                 hqMinutes: item.hq.split(':').map(Number)[0] * 60 + item.hq.split(':').map(Number)[1]
             }));
 
-            // Agregar el primer horario del día siguiente para manejar casos cercanos a medianoche
             schedule.push({
                 gros: schedule[0].gros,
                 hq: schedule[0].hq,
@@ -501,45 +508,45 @@
                 hqMinutes: schedule[0].hqMinutes + 1440
             });
 
-            // Filtrar horarios válidos basados en la hora de llegada a HQ
             const validTimes = schedule.filter(item => {
                 const diff = item.hqMinutes - targetTimeInMinutes;
                 return diff >= 0 && diff <= maxDelayMinutes;
             });
 
-            // Ordenar por hora de salida (gros) de forma ascendente
             validTimes.sort((a, b) => a.grosMinutes - b.grosMinutes);
 
             return validTimes.slice(0, 3).map(item => ({ gros: item.gros, hq: item.hq }));
         }
 
         document.getElementById('playButton').addEventListener('click', function() {
+            const closestTimesDiv = document.getElementById('closestTimes');
+            closestTimesDiv.style.display = 'none';
+        });
+
+        document.getElementById('busTimeInput').addEventListener('change', function() {
             const input = document.getElementById('busTimeInput').value.trim();
             const closestTimesDiv = document.getElementById('closestTimes');
 
             if (!input) {
                 closestTimesDiv.textContent = '';
+                closestTimesDiv.style.display = 'none';
                 return;
             }
 
             const closestTimes = findClosestBusTimes(input);
             if (closestTimes.length === 0) {
                 closestTimesDiv.textContent = '';
+                closestTimesDiv.style.display = 'none';
             } else {
                 const result = closestTimes.map(item => `${item.gros} ➡️ ${item.hq}`).join(', ');
                 closestTimesDiv.textContent = result;
-                closestTimesDiv.style.display = 'block'; // Mostrar resultados
+                closestTimesDiv.style.display = 'block';
             }
         });
 
-        document.getElementById('busTimeInput').addEventListener('change', function() {
-            document.getElementById('playButton').click();
-        });
-
-        // Mostrar el input y resultados al hacer clic en el botón eGate
         document.getElementById('eGateButton').addEventListener('click', function() {
-            document.getElementById('eGateButton').style.display = 'none'; // Ocultar el botón
-            document.querySelector('.input-container').style.display = 'flex'; // Mostrar el input
+            document.getElementById('eGateButton').style.display = 'none';
+            document.querySelector('.input-container').style.display = 'flex';
         });
 
         window.onload = function() {
@@ -547,7 +554,6 @@
             document.body.style.height = window.innerHeight + 'px';
             window.scrollTo(0, 0);
             updateSkyAndCelestial();
-            createStars();
             updateCountdown();
         };
 
@@ -555,3 +561,4 @@
     </script>
 </body>
 </html>
+```​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​​
