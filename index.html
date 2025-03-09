@@ -9,6 +9,13 @@
     <link rel="apple-touch-icon" href="https://img.icons8.com/?size=100&id=fRKgJhBjMqCd&format=png&color=000000">
     <link rel="apple-touch-startup-image" href="https://example.com/splash.png">
     <style>
+        @font-face {
+            font-family: 'Emirates Bold';
+            src: url('https://c.ekstatic.net/shared/fonts/emirates/emirates-bold-v3.woff2') format('woff2');
+            font-weight: bold;
+            font-style: normal;
+        }
+
         html, body {
             height: 100vh;
             width: 100vw;
@@ -21,7 +28,7 @@
             background: #191970;
         }
         body {
-            font-family: Helvetica, Arial, sans-serif;
+            font-family: 'Emirates Bold', Helvetica, Arial, sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -159,6 +166,11 @@
             align-items: center;
             gap: 10px;
         }
+        .input-container span {
+            font-family: 'Emirates Bold', sans-serif; /* Fuente aplicada al texto "eGate" */
+            font-size: 1.2em;
+            color: #2c3e50;
+        }
         #busTimeInput {
             padding: 10px;
             font-size: 1.2em;
@@ -192,6 +204,7 @@
         #eGateButton {
             padding: 0 20px;
             font-size: 1.2em;
+            font-family: 'Emirates Bold', sans-serif; /* Fuente aplicada al botón "eGate" */
             background: white;
             color: #2c3e50;
             border: none;
