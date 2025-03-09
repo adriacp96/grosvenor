@@ -183,20 +183,19 @@
             margin-top: 20px;
             padding: 0 20px;
             font-size: 1.2em;
-            background: linear-gradient(to right, rgba(44, 62, 80, 0.2), rgba(44, 62, 80, 0.8)); /* Degradado inspirado en #2c3e50 */
-            color: #2c3e50; /* Igual que #toggleRoute */
+            background: white; /* Fondo blanco */
+            color: #2c3e50; /* Color de texto oscuro para contraste */
             border: none;
             border-radius: 5px;
             cursor: pointer;
-            transition: background 0.3s ease, transform 0.3s;
+            transition: transform 0.3s;
             width: 100px;
             height: 24px;
             line-height: 24px;
             box-sizing: border-box;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Sombra sutil para profundidad */
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Solo sombra */
         }
         #eGateButton:hover {
-            background: linear-gradient(to right, rgba(44, 62, 80, 0.8), rgba(44, 62, 80, 0.2)); /* Invertimos el degradado al hover */
             transform: scale(1.05);
         }
     </style>
@@ -528,6 +527,7 @@
             eGateButton.style.display = 'inline-block';
             eGateButton.style.width = '100px';
             eGateButton.style.height = '24px';
+            eGateButton.style.background = 'white'; /* Aseguramos que siga siendo blanco */
         });
 
         document.getElementById('busTimeInput').addEventListener('change', function() {
