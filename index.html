@@ -519,8 +519,9 @@
         }
 
         document.getElementById('playButton').addEventListener('click', function() {
-            const closestTimesDiv = document.getElementById('closestTimes');
-            closestTimesDiv.style.display = 'none';
+            document.querySelector('.input-container').style.display = 'none';
+            document.getElementById('closestTimes').style.display = 'none';
+            document.getElementById('eGateButton').style.display = 'block';
         });
 
         document.getElementById('busTimeInput').addEventListener('change', function() {
