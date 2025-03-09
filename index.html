@@ -189,6 +189,9 @@
             border-radius: 5px;
             cursor: pointer;
             transition: background-color 0.3s, transform 0.3s;
+            width: 100px;
+            height: 40px;
+            box-sizing: border-box;
         }
         #eGateButton:hover {
             background-color: #34495e;
@@ -386,8 +389,6 @@
             const containerHeight = containerRect.height / window.innerHeight * 100;
             const containerLeft = containerRect.left / window.innerWidth * 100;
             const containerTop = containerRect.top / window.innerHeight * 100;
-            const containerRight = containerLeft + containerWidth;
-            const containerBottom = containerTop + containerHeight;
 
             const startX = 0;
             const endX = 100;
@@ -521,7 +522,10 @@
         document.getElementById('playButton').addEventListener('click', function() {
             document.querySelector('.input-container').style.display = 'none';
             document.getElementById('closestTimes').style.display = 'none';
-            document.getElementById('eGateButton').style.display = 'block';
+            const eGateButton = document.getElementById('eGateButton');
+            eGateButton.style.display = 'inline-block';
+            eGateButton.style.width = '100px';
+            eGateButton.style.height = '40px';
         });
 
         document.getElementById('busTimeInput').addEventListener('change', function() {
