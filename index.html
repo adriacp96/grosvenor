@@ -354,21 +354,39 @@
 
         function updateSkyAndCelestial() {
             const now = new Date();
-            const utcOffset = 4 * 60;
+            const utcOffset = 4 * 60; // Offset de Dubai (UTC+4)
             const dubaiTime = new Date(now.getTime() + utcOffset * 60 * 1000);
             const hours = dubaiTime.getHours();
             const minutes = dubaiTime.getMinutes();
             const totalMinutes = hours * 60 + minutes;
 
+            const month = dubaiTime.getMonth(); // 0 = enero, 11 = diciembre
             const celestial = document.getElementById('celestialBody');
             const starsContainer = document.getElementById('starsContainer');
             let gradient;
 
-            const sunrise = 6.5 * 60;
-            const sunset = 18.5 * 60;
-            const dayLength = sunset - sunrise;
-            const nightLength = 1440 - dayLength;
+            // Definir horarios de invierno y verano
+            const winterSunrise = 7 * 60; // 7:00 a.m.
+            const winterSunset = 17.5 * 60; // 5:30 p.m.
+            const summerSunrise = 5.5 * 60; // 5:30 a.m.
+            const summerSunset = 19 + 10 / 60; // 7:10 p.m.
 
+            // Interpolación lineal basada en el mes
+            let sunrise, sunset;
+            if (month === 11 || month === 0) { // Diciembre o Enero
+                sunrise = winterSunrise;
+                sunset = winterSunset;
+            } else if (month === 5 || month === 6) { // Junio o Julio
+                sunrise = summerSunrise;
+                sunset = summerSunset;
+            } else {
+                // Interpolación entre invierno (mes 0) y verano (mes 6)
+                const monthProgress = month <= 6 ? month / 6 : (12 - month) / 6;
+                sunrise = winterSunrise + (summerSunrise - winterSunrise) * monthProgress;
+                sunset = winterSunset + (summerSunset - winterSunset) * monthProgress;
+            }
+
+            // Determinar si es de día o de noche
             if (totalMinutes >= sunrise && totalMinutes < sunset) {
                 gradient = 'linear-gradient(to bottom, #87cefa, #4682b4)';
                 celestial.textContent = '☀️';
@@ -384,7 +402,11 @@
             }
             document.body.style.background = gradient;
 
+            // Calcular la posición del cuerpo celeste
             let progress;
+            const dayLength = sunset - sunrise;
+            const nightLength = 1440 - dayLength;
+
             if (totalMinutes >= sunrise && totalMinutes < sunset) {
                 progress = (totalMinutes - sunrise) / dayLength;
             } else {
