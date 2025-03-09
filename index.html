@@ -109,15 +109,25 @@
             z-index: 1;
             pointer-events: none;
         }
-        #toggleRoute {
+        .button-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px; /* Espacio entre los botones */
             margin-top: 20px;
-            padding: 10px 20px;
-            font-size: 1.5em;
+        }
+        #toggleRoute {
+            padding: 0; /* Ajustado para igualar altura */
+            font-size: 24px; /* Igualado al tamaño del emoji */
             background-color: transparent;
             color: #2c3e50;
             border: none;
             cursor: pointer;
             transition: transform 0.3s;
+            width: 24px; /* Ancho igual a la altura para que sea cuadrado */
+            height: 24px; /* Igualado al eGateButton */
+            line-height: 24px; /* Centrado vertical */
+            box-sizing: border-box;
         }
         #toggleRoute:hover {
             transform: rotate(180deg);
@@ -180,20 +190,19 @@
             display: none;
         }
         #eGateButton {
-            margin-top: 20px;
             padding: 0 20px;
             font-size: 1.2em;
-            background: white; /* Fondo blanco */
-            color: #2c3e50; /* Color de texto oscuro para contraste */
+            background: white;
+            color: #2c3e50;
             border: none;
             border-radius: 5px;
             cursor: pointer;
             transition: transform 0.3s;
             width: 100px;
-            height: 24px;
+            height: 24px; /* Igualado al tamaño del emoji 🔄 */
             line-height: 24px;
             box-sizing: border-box;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Solo sombra */
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
         }
         #eGateButton:hover {
             transform: scale(1.05);
@@ -213,8 +222,10 @@
             </div>
             <div class="bus-emoji" id="busEmoji">🚌</div>
         </div>
-        <button id="toggleRoute">🔄</button>
-        <button id="eGateButton">eGate</button>
+        <div class="button-container">
+            <button id="toggleRoute">🔄</button>
+            <button id="eGateButton">eGate</button>
+        </div>
         <div class="input-container">
             <span>eGate</span>
             <input type="time" id="busTimeInput">
@@ -527,7 +538,7 @@
             eGateButton.style.display = 'inline-block';
             eGateButton.style.width = '100px';
             eGateButton.style.height = '24px';
-            eGateButton.style.background = 'white'; /* Aseguramos que siga siendo blanco */
+            eGateButton.style.background = 'white';
         });
 
         document.getElementById('busTimeInput').addEventListener('change', function() {
