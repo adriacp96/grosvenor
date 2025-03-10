@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <title>Grosvenor</title>
     <link rel="apple-touch-icon" href="https://i.imghippo.com/files/tEG3031vlA.png">
     <link rel="apple-touch-startup-image" href="https://example.com/splash.png">
@@ -367,7 +367,7 @@
 
         function updateSkyAndCelestial() {
             const now = new Date();
-            const utcOffset = 4 * 60; // Offset de Dubai (UTC+4)
+            const utcOffset = 4 * 60;
             const dubaiTime = new Date(now.getTime() + utcOffset * 60 * 1000);
             const hours = dubaiTime.getHours();
             const minutes = dubaiTime.getMinutes();
@@ -377,13 +377,11 @@
             const starsContainer = document.getElementById('starsContainer');
             let gradient;
 
-            // Horarios aproximados para Dubái el 10 de marzo de 2025
-            const sunrise = 6 * 60 + 30; // 6:30 a.m.
-            const sunset = 18 * 60 + 30; // 6:30 p.m.
-            const moonrise = 12 * 60 + 45; // 12:45 p.m. (aproximado)
-            const moonset = 1 * 60 + 15; // 1:15 a.m. del día siguiente (aproximado)
+            const sunrise = 6 * 60 + 30;
+            const sunset = 18 * 60 + 30;
+            const moonrise = 12 * 60 + 45;
+            const moonset = 1 * 60 + 15;
 
-            // Determinar si es de día o de noche y actualizar el cuerpo celeste
             if (totalMinutes >= sunrise && totalMinutes < sunset) {
                 gradient = 'linear-gradient(to bottom, #87cefa, #4682b4)';
                 celestial.textContent = '☀️';
@@ -399,7 +397,6 @@
             }
             document.body.style.background = gradient;
 
-            // Calcular la posición del cuerpo celeste (sol o luna)
             let progress;
             const isDay = totalMinutes >= sunrise && totalMinutes < sunset;
             const dayLength = sunset - sunrise;
