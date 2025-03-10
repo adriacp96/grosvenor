@@ -23,6 +23,17 @@
             padding: 0;
             overflow: hidden;
         }
+        #background-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            min-height: 100vh;
+            background: linear-gradient(to bottom, #191970, #000080);
+            background-size: cover;
+            background-attachment: fixed;
+            z-index: 0;
+        }
         body {
             font-family: 'Emirates Bold', Helvetica, Arial, sans-serif;
             margin: 0;
@@ -33,19 +44,12 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            transition: background 1s ease;
-            background: #191970;
-            background-size: cover;
-            background-position: center;
+            position: relative;
+            z-index: 1;
+            overflow: hidden;
             padding-top: env(safe-area-inset-top);
             padding-bottom: env(safe-area-inset-bottom);
             box-sizing: border-box;
-            position: relative;
-            overflow: hidden;
-            /* Asegurar que el degradado cubra toda la pantalla */
-            background: linear-gradient(to bottom, #191970, #000080);
-            background-attachment: fixed; /* Fija el fondo para que no se vea afectado por el padding */
-            background-size: 100% 100%; /* Forzar que el degradado ocupe todo el alto */
         }
         .emirates-logo {
             position: absolute;
@@ -231,6 +235,7 @@
     </style>
 </head>
 <body>
+    <div id="background-container"></div>
     <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d0/Emirates_logo.svg/1200px-Emirates_logo.svg.png" 
          alt="Emirates Logo" class="emirates-logo">
     <div class="container">
@@ -403,7 +408,7 @@
                     starsCreated = true;
                 }
             }
-            document.body.style.background = gradient;
+            document.getElementById('background-container').style.background = gradient;
 
             let progress;
             const isDay = totalMinutes >= sunrise && totalMinutes < sunset;
