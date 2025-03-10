@@ -120,20 +120,20 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            gap: 10px; /* Espacio entre los botones */
+            gap: 10px;
             margin-top: 20px;
         }
         #toggleRoute {
-            padding: 0; /* Ajustado para igualar altura */
-            font-size: 24px; /* Igualado al tamaño del emoji */
+            padding: 0;
+            font-size: 24px;
             background-color: transparent;
             color: #2c3e50;
             border: none;
             cursor: pointer;
             transition: transform 0.3s;
-            width: 24px; /* Ancho igual a la altura para que sea cuadrado */
-            height: 24px; /* Igualado al eGateButton */
-            line-height: 24px; /* Centrado vertical */
+            width: 24px;
+            height: 24px;
+            line-height: 24px;
             box-sizing: border-box;
         }
         #toggleRoute:hover {
@@ -167,7 +167,7 @@
             gap: 10px;
         }
         .input-container span {
-            font-family: 'Emirates Bold', sans-serif; /* Fuente aplicada al texto "eGate" */
+            font-family: 'Emirates Bold', sans-serif;
             font-size: 1.2em;
             color: #2c3e50;
         }
@@ -204,7 +204,7 @@
         #eGateButton {
             padding: 0 20px;
             font-size: 1.2em;
-            font-family: 'Emirates Bold', sans-serif; /* Fuente aplicada al botón "eGate" */
+            font-family: 'Emirates Bold', sans-serif;
             background: white;
             color: #2c3e50;
             border: none;
@@ -212,7 +212,7 @@
             cursor: pointer;
             transition: transform 0.3s;
             width: 100px;
-            height: 24px; /* Igualado al tamaño del emoji 🔄 */
+            height: 24px;
             line-height: 24px;
             box-sizing: border-box;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
@@ -373,33 +373,17 @@
             const minutes = dubaiTime.getMinutes();
             const totalMinutes = hours * 60 + minutes;
 
-            const month = dubaiTime.getMonth(); // 0 = enero, 11 = diciembre
             const celestial = document.getElementById('celestialBody');
             const starsContainer = document.getElementById('starsContainer');
             let gradient;
 
-            // Definir horarios de invierno y verano
-            const winterSunrise = 7 * 60; // 7:00 a.m.
-            const winterSunset = 17.5 * 60; // 5:30 p.m.
-            const summerSunrise = 5.5 * 60; // 5:30 a.m.
-            const summerSunset = 19 + 10 / 60; // 7:10 p.m.
+            // Horarios aproximados para Dubái el 10 de marzo de 2025
+            const sunrise = 6 * 60 + 30; // 6:30 a.m.
+            const sunset = 18 * 60 + 30; // 6:30 p.m.
+            const moonrise = 12 * 60 + 45; // 12:45 p.m. (aproximado)
+            const moonset = 1 * 60 + 15; // 1:15 a.m. del día siguiente (aproximado)
 
-            // Interpolación lineal basada en el mes
-            let sunrise, sunset;
-            if (month === 11 || month === 0) { // Diciembre o Enero
-                sunrise = winterSunrise;
-                sunset = winterSunset;
-            } else if (month === 5 || month === 6) { // Junio o Julio
-                sunrise = summerSunrise;
-                sunset = summerSunset;
-            } else {
-                // Interpolación entre invierno (mes 0) y verano (mes 6)
-                const monthProgress = month <= 6 ? month / 6 : (12 - month) / 6;
-                sunrise = winterSunrise + (summerSunrise - winterSunrise) * monthProgress;
-                sunset = winterSunset + (summerSunset - winterSunset) * monthProgress;
-            }
-
-            // Determinar si es de día o de noche
+            // Determinar si es de día o de noche y actualizar el cuerpo celeste
             if (totalMinutes >= sunrise && totalMinutes < sunset) {
                 gradient = 'linear-gradient(to bottom, #87cefa, #4682b4)';
                 celestial.textContent = '☀️';
@@ -415,18 +399,20 @@
             }
             document.body.style.background = gradient;
 
-            // Calcular la posición del cuerpo celeste
+            // Calcular la posición del cuerpo celeste (sol o luna)
             let progress;
+            const isDay = totalMinutes >= sunrise && totalMinutes < sunset;
             const dayLength = sunset - sunrise;
             const nightLength = 1440 - dayLength;
 
-            if (totalMinutes >= sunrise && totalMinutes < sunset) {
+            if (isDay) {
                 progress = (totalMinutes - sunrise) / dayLength;
             } else {
-                const nightMinutes = totalMinutes < sunrise 
-                    ? totalMinutes + (1440 - sunset) 
-                    : totalMinutes - sunset;
-                progress = nightMinutes / nightLength;
+                const adjustedMinutes = totalMinutes < sunrise 
+                    ? totalMinutes + (1440 - moonset) 
+                    : totalMinutes - moonrise;
+                const moonCycle = moonset < moonrise ? 1440 - moonrise + moonset : moonset - moonrise;
+                progress = adjustedMinutes / moonCycle;
             }
             progress = Math.max(0, Math.min(1, progress));
 
