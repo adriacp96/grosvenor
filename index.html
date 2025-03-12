@@ -391,9 +391,9 @@
             let gradient;
 
             const sunrise = 6 * 60 + 30;
-            const sunset = 18 * 60 + 30;
-            const moonrise = 12 * 60 + 45;
-            const moonset = 1 * 60 + 15;
+            const sunset = sunrise + 12 * 60;
+            const moonrise = sunset;
+            const moonset = moonrise + 12 * 60;
 
             if (totalMinutes >= sunrise && totalMinutes < sunset) {
                 gradient = 'linear-gradient(to bottom, #87cefa, #4682b4)';
@@ -412,17 +412,13 @@
 
             let progress;
             const isDay = totalMinutes >= sunrise && totalMinutes < sunset;
-            const dayLength = sunset - sunrise;
-            const nightLength = 1440 - dayLength;
+            const cycleLength = 12 * 60;
 
             if (isDay) {
-                progress = (totalMinutes - sunrise) / dayLength;
+                progress = (totalMinutes - sunrise) / cycleLength;
             } else {
-                const adjustedMinutes = totalMinutes < sunrise 
-                    ? totalMinutes + (1440 - moonset) 
-                    : totalMinutes - moonrise;
-                const moonCycle = moonset < moonrise ? 1440 - moonrise + moonset : moonset - moonrise;
-                progress = adjustedMinutes / moonCycle;
+                const adjustedMinutes = totalMinutes < sunrise ? totalMinutes + 1440 : totalMinutes;
+                progress = (adjustedMinutes - moonrise) / cycleLength;
             }
             progress = Math.max(0, Math.min(1, progress));
 
