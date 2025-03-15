@@ -524,7 +524,7 @@ function updateSkyAndCelestial() {
         function findClosestBusTimes(inputTime) {
             const [inputHours, inputMinutes] = inputTime.split(':').map(Number);
             const targetTimeInMinutes = inputHours * 60 + inputMinutes;
-            const maxDelayMinutes = 30;
+            const maxDelayMinutes = 55;
 
             const schedule = grosvenorToHQSchedule.map(item => ({
                 gros: item.gros,
