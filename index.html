@@ -380,7 +380,7 @@
 
 function updateSkyAndCelestial() {
     const now = new Date();
-    const utcOffset = 4 * 60; // Dubai UTC+4
+    const utcOffset = 4 * 60;
     const dubaiTime = new Date(now.getTime() + utcOffset * 60 * 1000);
     const hours = dubaiTime.getHours();
     const minutes = dubaiTime.getMinutes();
@@ -390,14 +390,12 @@ function updateSkyAndCelestial() {
     const starsContainer = document.getElementById('starsContainer');
     let gradient;
 
-    // Define 12-hour cycles (in minutes)
-    const dayLength = 12 * 60;  // 12 hours = 720 minutes
-    const sunrise = 6 * 60;     // 06:00
-    const sunset = sunrise + dayLength;  // 18:00
-    const moonrise = sunset;    // 18:00
-    const moonset = moonrise + dayLength; // 06:00 next day
+    const dayLength = 12 * 60;
+    const sunrise = 6 * 60;
+    const sunset = sunrise + dayLength;
+    const moonrise = sunset;
+    const moonset = moonrise + dayLength;
 
-    // Determine if it's day or night and set appearance
     const isDay = totalMinutes >= sunrise && totalMinutes < sunset;
     if (isDay) {
         gradient = 'linear-gradient(to bottom, #87cefa, #4682b4)';
@@ -414,33 +412,26 @@ function updateSkyAndCelestial() {
     }
     document.getElementById('background-container').style.background = gradient;
 
-    // Calculate progress through the 12-hour cycle
     let progress;
     if (isDay) {
         progress = (totalMinutes - sunrise) / dayLength;
     } else {
-        // Handle moon cycle, accounting for day wrap-around
         const adjustedMinutes = totalMinutes < sunrise ? totalMinutes + 1440 : totalMinutes;
         progress = (adjustedMinutes - moonrise) / dayLength;
     }
     progress = Math.max(0, Math.min(1, progress));
 
-    // Define parabolic path
-    const startX = 5;    // Start at 5% from left
-    const endX = 95;     // End at 95% from right
-    const bottomY = 90;  // Near bottom of screen
-    const peakY = 10;    // Peak height near top
+    const aspectRatio = window.innerWidth / window.innerHeight;
+    const startX = 5;
+    const endX = 95;
+    const bottomY = 90;
+    const peakY = 10 * aspectRatio;
 
-    // Calculate X position (linear)
     const xPos = startX + (endX - startX) * progress;
-
-    // Calculate Y position (parabolic)
-    // Using equation y = a(x-h)² + k where h is midpoint and k is bottomY
     const midpointX = (startX + endX) / 2;
     const a = (peakY - bottomY) / Math.pow((endX - startX) / 2, 2);
     const yPos = a * Math.pow(xPos - midpointX, 2) + bottomY;
 
-    // Apply position
     celestial.style.left = `${xPos}vw`;
     celestial.style.top = `${yPos}vh`;
     celestial.style.display = 'block';
