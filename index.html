@@ -252,35 +252,32 @@
         #firstVisitPopup h2 {
             margin: 0 0 15px 0;
             font-size: 1.5em;
+            text-align: center;
         }
         #firstVisitPopup p {
             margin: 0 0 15px 0;
             font-size: 1em;
             line-height: 1.4;
+            text-align: center;
         }
         #firstVisitPopup ul {
             list-style: none;
             padding: 0;
             margin: 0 0 15px 0;
-            text-align: left;
+            text-align: center;
         }
         #firstVisitPopup li {
             margin: 10px 0;
             display: flex;
+            justify-content: center;
             align-items: center;
+            text-align: center;
         }
         #firstVisitPopup .icon {
             margin-right: 10px;
-            font-size: 1.2em;
-            display: inline-block;
             width: 20px;
             height: 20px;
             vertical-align: middle;
-        }
-        #firstVisitPopup .icon svg {
-            width: 100%;
-            height: 100%;
-            fill: #2c3e50;
         }
         #closePopup {
             padding: 5px 15px;
@@ -346,25 +343,17 @@
         <p>To install this app on your iPhone:</p>
         <ul>
             <li>
-                <span class="icon">
-                    <svg viewBox="0 0 24 24">
-                        <rect x="4" y="4" width="16" height="16" rx="2" fill="none" stroke="#2c3e50" stroke-width="2"/>
-                        <path d="M12 6l-6 6h4v6h4v-6h4l-6-6z" fill="#2c3e50"/>
-                    </svg>
-                </span>
+                <img src="[URL_TO_SHARE_ICON_PNG]" alt="Share Icon" class="icon">
                 Tap the <b>Share</b> button in Safari.
             </li>
             <li>
-                <span class="icon">
-                    <svg viewBox="0 0 24 24">
-                        <rect x="4" y="4" width="16" height="16" rx="2" fill="none" stroke="#2c3e50" stroke-width="2"/>
-                        <path d="M12 8v8m-4-4h8" fill="none" stroke="#2c3e50" stroke-width="2"/>
-                        <path d="M16 8l4-4m-4 0l4 4" fill="none" stroke="#2c3e50" stroke-width="2"/>
-                    </svg>
-                </span>
+                <img src="[URL_TO_ADD_TO_HOME_SCREEN_ICON_PNG]" alt="Add to Home Screen Icon" class="icon">
                 Select <b>Add to Home Screen</b>.
             </li>
-            <li>Tap Add in the top-right corner.</li>
+            <li>
+                <span class="icon">➕</span>
+                Tap <b>Add</b> in the top-right corner.
+            </li>
         </ul>
         <button id="closePopup">Close</button>
     </div>
@@ -693,6 +682,7 @@
             const popup = document.getElementById('firstVisitPopup');
             popup.style.display = 'none';
             document.body.classList.remove('black-background');
+            localStorage.setItem('hasVisited', 'true');
         });
 
         window.onload = function() {
