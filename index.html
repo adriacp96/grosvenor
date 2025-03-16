@@ -422,13 +422,9 @@ function updateSkyAndCelestial() {
     }
     progress = Math.max(0, Math.min(1, progress)); // Asegurar que esté entre 0 y 1
 
-    // Definir la parábola: y = a * (x - 50)^2
-    // - x = 0vw, y = 100vh (inicio)
-    // - x = 100vw, y = 100vh (fin)
-    // - vértice en x = 50vw, y = 0vh
+    // Definir la parábola: y = 0.03 * (x - 50)^2 + 25
     const xPos = progress * 100; // De 0vw a 100vw
-    const a = 100 / Math.pow(50, 2); // Coeficiente parabólico (100vh cuando x está a 50vw del vértice)
-    const yPos = a * Math.pow(xPos - 50, 2); // Ecuación de la parábola
+    const yPos = 0.03 * Math.pow(xPos - 50, 2) + 25; // Vértice en (50vw, 25vh)
 
     celestial.style.left = `${xPos}vw`;
     celestial.style.top = `${yPos}vh`;
