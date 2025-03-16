@@ -111,14 +111,14 @@
             transform: scaleX(-1);
             transition: left 0.5s linear;
         }
-        #celestialBody {
-            font-size: 60px;
-            position: absolute;
-            transition: all 1s ease;
-            z-index: 1;
-            opacity: 1;
-            pointer-events: none;
-        }
+#celestialBody {
+    font-size: 60px;
+    position: absolute;
+    transition: none;
+    z-index: 1;
+    opacity: 1;
+    pointer-events: none;
+}
         .dunes {
             position: absolute;
             bottom: 0;
@@ -421,13 +421,13 @@ function updateSkyAndCelestial() {
     }
     progress = Math.max(0, Math.min(1, progress));
 
-    const radiusX = 50;
-    const radiusY = 45;
+    const radiusX = 45;
+    const radiusY = 40;
     const centerX = 50;
-    const centerY = 55;
+    const centerY = 50;
     const angle = progress * Math.PI;
-    const xPos = centerX + radiusX * Math.cos(angle - Math.PI / 2);
-    const yPos = centerY - radiusY * Math.sin(angle - Math.PI / 2);
+    const xPos = Math.max(5, Math.min(95, centerX + radiusX * Math.cos(angle - Math.PI / 2)));
+    const yPos = Math.max(10, Math.min(90, centerY - radiusY * Math.sin(angle - Math.PI / 2)));
 
     celestial.style.left = `${xPos}vw`;
     celestial.style.top = `${yPos}vh`;
