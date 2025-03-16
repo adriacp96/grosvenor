@@ -421,13 +421,8 @@ function updateSkyAndCelestial() {
     }
     progress = Math.max(0, Math.min(1, progress));
 
-    const radiusX = 45;
-    const radiusY = 40;
-    const centerX = 50;
-    const centerY = 50;
-    const angle = progress * Math.PI;
-    const xPos = Math.max(5, Math.min(95, centerX + radiusX * Math.cos(angle - Math.PI / 2)));
-    const yPos = Math.max(10, Math.min(90, centerY - radiusY * Math.sin(angle - Math.PI / 2)));
+    const xPos = 5 + progress * (90);
+    const yPos = 90 - 80 * 4 * progress * (1 - progress);
 
     celestial.style.left = `${xPos}vw`;
     celestial.style.top = `${yPos}vh`;
