@@ -384,18 +384,19 @@ function updateSkyAndCelestial() {
     const dubaiTime = new Date(now.getTime() + utcOffset * 60 * 1000);
     const hours = dubaiTime.getHours();
     const minutes = dubaiTime.getMinutes();
-    const totalMinutes = hours * 60 + minutes;
+    const totalMinutes = hours * 60 + minutes; // Minutos totales desde medianoche
 
     const celestial = document.getElementById('celestialBody');
     const starsContainer = document.getElementById('starsContainer');
     let gradient;
 
-    const dayLength = 12 * 60; // 12 horas en minutos
-    const sunrise = 6 * 60;    // 6:00 AM
-    const sunset = 18 * 60;    // 6:00 PM
-    const moonrise = sunset;   // 6:00 PM
-    const moonset = sunrise + 1440; // 6:00 AM del día siguiente
+    const dayLength = 12 * 60; // 12 horas en minutos (720 minutos)
+    const sunrise = 6 * 60;    // 6:00 AM (360 minutos)
+    const sunset = 18 * 60;    // 6:00 PM (1080 minutos)
+    const moonrise = sunset;   // 6:00 PM (1080 minutos)
+    const moonset = sunrise + 1440; // 6:00 AM del día siguiente (1800 minutos ajustados)
 
+    // Determinar si es día (Sol) o noche (Luna)
     const isDay = totalMinutes >= sunrise && totalMinutes < sunset;
     if (isDay) {
         gradient = 'linear-gradient(to bottom, #87cefa, #4682b4)';
@@ -412,23 +413,32 @@ function updateSkyAndCelestial() {
     }
     document.getElementById('background-container').style.background = gradient;
 
-    // Calcular progreso en el ciclo de 12 horas
+    // Calcular progreso en el ciclo de 12 horas basado en la hora actual
     let progress;
     if (isDay) {
-        progress = (totalMinutes - sunrise) / dayLength; // Progreso del Sol (6:00 a 18:00)
+        // Sol: de 6:00 (360 min) a 18:00 (1080 min)
+        progress = (totalMinutes - sunrise) / dayLength; // 0 a 1 durante el día
     } else {
+        // Luna: de 18:00 (1080 min) a 6:00 del día siguiente (360 + 1440 = 1800 min)
         const adjustedMinutes = totalMinutes < sunrise ? totalMinutes + 1440 : totalMinutes;
-        progress = (adjustedMinutes - moonrise) / dayLength; // Progreso de la Luna (18:00 a 6:00)
+        progress = (adjustedMinutes - moonrise) / dayLength; // 0 a 1 durante la noche
     }
-    progress = Math.max(0, Math.min(1, progress)); // Asegurar que esté entre 0 y 1
+    progress = Math.max(0, Math.min(1, progress)); // Limitar entre 0 y 1
 
     // Definir la parábola: y = 0.03 * (x - 50)^2 + 25
+    // - Inicio: x = 0vw, y = 100vh
+    // - Vértice: x = 50vw, y = 25vh
+    // - Fin: x = 100vw, y = 100vh
     const xPos = progress * 100; // De 0vw a 100vw
-    const yPos = 0.03 * Math.pow(xPos - 50, 2) + 25; // Vértice en (50vw, 25vh)
+    const yPos = 0.03 * Math.pow(xPos - 50, 2) + 25; // Posición en la parábola
 
+    // Aplicar posición al elemento celestial
     celestial.style.left = `${xPos}vw`;
     celestial.style.top = `${yPos}vh`;
     celestial.style.display = 'block';
+
+    // Depuración: Mostrar la hora y progreso en consola (opcional, para verificar)
+    // console.log(`Hora Dubai: ${hours}:${String(minutes).padStart(2, '0')}, Progress: ${progress.toFixed(3)}, Pos: (${xPos.toFixed(1)}vw, ${yPos.toFixed(1)}vh)`);
 }
 
         function updateCountdown() {
