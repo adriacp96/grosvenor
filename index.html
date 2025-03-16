@@ -232,6 +232,45 @@
         #eGateButton:hover {
             transform: scale(1.05);
         }
+        /* Popup Styles */
+        #firstVisitPopup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.3);
+            z-index: 1000;
+            text-align: center;
+            max-width: 90%;
+            width: 300px;
+            color: #2c3e50;
+        }
+        #firstVisitPopup h2 {
+            margin: 0 0 15px 0;
+            font-size: 1.5em;
+        }
+        #firstVisitPopup p {
+            margin: 0 0 15px 0;
+            font-size: 1em;
+            line-height: 1.4;
+        }
+        #closePopup {
+            padding: 5px 15px;
+            font-size: 1em;
+            background-color: #2c3e50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        #closePopup:hover {
+            background-color: #34495e;
+        }
     </style>
 </head>
 <body>
@@ -264,6 +303,16 @@
         <path id="dunePath" fill="rgba(237, 201, 175, 0.4)" />
     </svg>
     <div class="stars-container" id="starsContainer"></div>
+
+    <!-- Popup for first visit -->
+    <div id="firstVisitPopup">
+        <h2>Add to Home Screen</h2>
+        <p>To install this app on your iPhone:<br>
+        1. Tap the <b>Share</b> button in Safari.<br>
+        2. Select <b>Add to Home Screen</b>.<br>
+        3. Tap <b>Add</b> in the top-right corner.</p>
+        <button id="closePopup">Close</button>
+    </div>
 
     <script>
         let dunePoints = [];
@@ -576,11 +625,24 @@
             document.querySelector('.input-container').style.display = 'flex';
         });
 
+        // Popup logic
+        function showFirstVisitPopup() {
+            if (!localStorage.getItem('hasVisited')) {
+                document.getElementById('firstVisitPopup').style.display = 'block';
+            }
+        }
+
+        document.getElementById('closePopup').addEventListener('click', function() {
+            document.getElementById('firstVisitPopup').style.display = 'none';
+            localStorage.setItem('hasVisited', 'true');
+        });
+
         window.onload = function() {
             generateRandomDune();
             window.scrollTo(0, 0);
             updateSkyAndCelestial();
             updateCountdown();
+            showFirstVisitPopup();
         };
 
         setInterval(updateCountdown, 100);
