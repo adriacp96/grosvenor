@@ -111,14 +111,14 @@
             transform: scaleX(-1);
             transition: left 0.5s linear;
         }
-#celestialBody {
-    font-size: 60px;
-    position: absolute;
-    transition: none;
-    z-index: 1;
-    opacity: 1;
-    pointer-events: none;
-}
+        #celestialBody {
+            font-size: 60px;
+            position: absolute;
+            transition: none;
+            z-index: 1;
+            opacity: 1;
+            pointer-events: none;
+        }
         .dunes {
             position: absolute;
             bottom: 0;
@@ -378,56 +378,54 @@
             return { previousBus, nextBus };
         }
 
-function updateSkyAndCelestial() {
-    const now = new Date();
-    const utcOffset = 4 * 60;
-    const dubaiTime = new Date(now.getTime() + utcOffset * 60 * 1000);
-    const hours = dubaiTime.getHours();
-    const minutes = dubaiTime.getMinutes();
-    const totalMinutes = hours * 60 + minutes;
+        function updateSkyAndCelestial() {
+            const now = new Date();
+            const hours = now.getHours();
+            const minutes = now.getMinutes();
+            const totalMinutes = hours * 60 + minutes;
 
-    const celestial = document.getElementById('celestialBody');
-    const starsContainer = document.getElementById('starsContainer');
-    let gradient;
+            const celestial = document.getElementById('celestialBody');
+            const starsContainer = document.getElementById('starsContainer');
+            let gradient;
 
-    const dayLength = 12 * 60;
-    const sunrise = 6 * 60;
-    const sunset = 18 * 60;
-    const moonrise = sunset;
-    const moonset = sunrise + 1440;
+            const dayLength = 12 * 60;
+            const sunrise = 6 * 60;
+            const sunset = 18 * 60;
+            const moonrise = sunset;
+            const moonset = sunrise + 1440;
 
-    const isDay = totalMinutes >= sunrise && totalMinutes < sunset;
-    if (isDay) {
-        gradient = 'linear-gradient(to bottom, #87cefa, #4682b4)';
-        celestial.textContent = '☀️';
-        starsContainer.style.display = 'none';
-    } else {
-        gradient = 'linear-gradient(to bottom, #191970, #000080)';
-        celestial.textContent = '🌙';
-        starsContainer.style.display = 'block';
-        if (!starsCreated) {
-            createStars();
-            starsCreated = true;
+            const isDay = totalMinutes >= sunrise && totalMinutes < sunset;
+            if (isDay) {
+                gradient = 'linear-gradient(to bottom, #87cefa, #4682b4)';
+                celestial.textContent = '☀️';
+                starsContainer.style.display = 'none';
+            } else {
+                gradient = 'linear-gradient(to bottom, #191970, #000080)';
+                celestial.textContent = '🌙';
+                starsContainer.style.display = 'block';
+                if (!starsCreated) {
+                    createStars();
+                    starsCreated = true;
+                }
+            }
+            document.getElementById('background-container').style.background = gradient;
+
+            let progress;
+            if (isDay) {
+                progress = (totalMinutes - sunrise) / dayLength;
+            } else {
+                const adjustedMinutes = totalMinutes < sunrise ? totalMinutes + 1440 : totalMinutes;
+                progress = (adjustedMinutes - moonrise) / dayLength;
+            }
+            progress = Math.max(0, Math.min(1, progress));
+
+            const xPos = 5 + progress * 90;
+            const yPos = 90 - 80 * 4 * progress * (1 - progress);
+
+            celestial.style.left = `${xPos}vw`;
+            celestial.style.top = `${yPos}vh`;
+            celestial.style.display = 'block';
         }
-    }
-    document.getElementById('background-container').style.background = gradient;
-
-    let progress;
-    if (isDay) {
-        progress = (totalMinutes - sunrise) / dayLength;
-    } else {
-        const adjustedMinutes = totalMinutes < sunrise ? totalMinutes + 1440 : totalMinutes;
-        progress = (adjustedMinutes - moonrise) / dayLength;
-    }
-    progress = Math.max(0, Math.min(1, progress));
-
-    const xPos = 5 + progress * (90);
-    const yPos = 90 - 80 * 4 * progress * (1 - progress);
-
-    celestial.style.left = `${xPos}vw`;
-    celestial.style.top = `${yPos}vh`;
-    celestial.style.display = 'block';
-}
 
         function updateCountdown() {
             const now = new Date();
