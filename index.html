@@ -33,7 +33,6 @@
             background-size: cover;
             background-attachment: fixed;
             z-index: 0;
-            transition: filter 0.3s ease;
         }
         body {
             font-family: 'Emirates Bold', Helvetica, Arial, sans-serif;
@@ -51,7 +50,6 @@
             padding-top: env(safe-area-inset-top);
             padding-bottom: env(safe-area-inset-bottom);
             box-sizing: border-box;
-            transition: filter 0.3s ease;
         }
         .emirates-logo {
             position: absolute;
@@ -66,7 +64,6 @@
             opacity: 0.9;
             border-radius: 10px;
             box-shadow: 0 0 10px rgba(0,0,0,0.3);
-            transition: filter 0.3s ease;
         }
         .container {
             text-align: center;
@@ -76,7 +73,6 @@
             box-shadow: 0 0 10px rgba(0,0,0,0.3);
             z-index: 2;
             position: relative;
-            transition: filter 0.3s ease;
         }
         #countdown {
             font-size: 2.5em;
@@ -122,7 +118,6 @@
             z-index: 1;
             opacity: 1;
             pointer-events: none;
-            transition: filter 0.3s ease;
         }
         .dunes {
             position: absolute;
@@ -132,7 +127,6 @@
             height: 25vh;
             z-index: 1;
             pointer-events: none;
-            transition: filter 0.3s ease;
         }
         .button-container {
             display: flex;
@@ -165,7 +159,6 @@
             height: 75vh;
             z-index: 0;
             pointer-events: none;
-            transition: filter 0.3s ease;
         }
         .star {
             position: absolute;
@@ -279,14 +272,12 @@
         #firstVisitPopup .icon {
             margin-right: 10px;
             font-size: 1.2em;
-        }
-        #firstVisitPopup .share-icon {
             display: inline-block;
             width: 20px;
             height: 20px;
             vertical-align: middle;
         }
-        #firstVisitPopup .share-icon svg {
+        #firstVisitPopup .icon svg {
             width: 100%;
             height: 100%;
             fill: #2c3e50;
@@ -304,15 +295,17 @@
         #closePopup:hover {
             background-color: #34495e;
         }
-        /* Blur effect when popup is active */
-        .blur-background #background-container,
-        .blur-background body,
-        .blur-background .emirates-logo,
-        .blur-background .container,
-        .blur-background #celestialBody,
-        .blur-background .dunes,
-        .blur-background .stars-container {
-            filter: blur(5px);
+        /* Black background when popup is active */
+        .black-background::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 1);
+            z-index: 999;
+            transition: opacity 0.3s ease;
         }
     </style>
 </head>
@@ -353,14 +346,24 @@
         <p>To install this app on your iPhone:</p>
         <ul>
             <li>
-                <span class="icon share-icon">
+                <span class="icon">
                     <svg viewBox="0 0 24 24">
-                        <path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92-1.31-2.92-2.92-2.92z"/>
+                        <rect x="4" y="4" width="16" height="16" rx="2" fill="none" stroke="#2c3e50" stroke-width="2"/>
+                        <path d="M12 6l-6 6h4v6h4v-6h4l-6-6z" fill="#2c3e50"/>
                     </svg>
                 </span>
                 Tap the <b>Share</b> button in Safari.
             </li>
-            <li><span class="icon">📲</span> Select <b>Add to Home Screen</b>.</li>
+            <li>
+                <span class="icon">
+                    <svg viewBox="0 0 24 24">
+                        <rect x="4" y="4" width="16" height="16" rx="2" fill="none" stroke="#2c3e50" stroke-width="2"/>
+                        <path d="M12 8v8m-4-4h8" fill="none" stroke="#2c3e50" stroke-width="2"/>
+                        <path d="M16 8l4-4m-4 0l4 4" fill="none" stroke="#2c3e50" stroke-width="2"/>
+                    </svg>
+                </span>
+                Select <b>Add to Home Screen</b>.
+            </li>
             <li><span class="icon">➕</span> Tap <b>Add</b> in the top-right corner.</li>
         </ul>
         <button id="closePopup">Close</button>
@@ -677,20 +680,19 @@
             document.querySelector('.input-container').style.display = 'flex';
         });
 
-        // Popup logic with blur effect
+        // Popup logic with black background
         function showFirstVisitPopup() {
             if (!localStorage.getItem('hasVisited')) {
                 const popup = document.getElementById('firstVisitPopup');
                 popup.style.display = 'block';
-                document.body.classList.add('blur-background');
+                document.body.classList.add('black-background');
             }
         }
 
         document.getElementById('closePopup').addEventListener('click', function() {
             const popup = document.getElementById('firstVisitPopup');
             popup.style.display = 'none';
-            document.body.classList.remove('blur-background');
-            localStorage.setItem('hasVisited', 'true');
+            document.body.classList.remove('black-background');
         });
 
         window.onload = function() {
