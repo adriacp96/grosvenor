@@ -111,22 +111,6 @@
             transform: scaleX(-1);
             transition: left 0.5s linear;
         }
-        .route-image {
-            position: absolute;
-            width: 32px; /* Slightly larger than bus emoji (24px) */
-            height: auto;
-            transition: opacity 0.5s ease;
-        }
-        .route-image.left {
-            left: 0;
-            bottom: 10px; /* Bottom aligned with top of progress bar */
-            transform: translateX(-50%);
-        }
-        .route-image.right {
-            right: 0;
-            bottom: 10px; /* Bottom aligned with top of progress bar */
-            transform: translateX(50%);
-        }
         #celestialBody {
             font-size: 60px;
             position: absolute;
@@ -334,8 +318,6 @@
                 <div class="progress-fill" id="progressFill"></div>
             </div>
             <div class="bus-emoji" id="busEmoji">🚌</div>
-            <img src="https://i.imghippo.com/files/bTT1071g.png" alt="Left Route" id="leftRouteImage" class="route-image left">
-            <img src="https://i.imghippo.com/files/TC4092ilM.png" alt="Right Route" id="rightRouteImage" class="route-image right">
         </div>
         <div class="button-container">
             <button id="toggleRoute">🔄</button>
@@ -609,30 +591,14 @@
             isGrosvenorToHQ = !isGrosvenorToHQ;
             const routeTitle = document.getElementById('routeTitle');
             const toggleButton = document.getElementById('toggleRoute');
-            const leftImage = document.getElementById('leftRouteImage');
-            const rightImage = document.getElementById('rightRouteImage');
             
-            // Fade out images
- Ursula            leftImage.style.opacity = '0';
-            rightImage.style.opacity = '0';
-            
-            setTimeout(() => {
-                if (isGrosvenorToHQ) {
-                    routeTitle.textContent = "Grosvenor to HQ in";
-                    toggleButton.textContent = "🔄";
-                    leftImage.src = "https://i.imghippo.com/files/bTT1071g.png";
-                    rightImage.src = "https://i.imghippo.com/files/TC4092ilM.png";
-                } else {
-                    routeTitle.textContent = "HQ to Grosvenor in";
-                    toggleButton.textContent = "🔄";
-                    leftImage.src = "https://i.imghippo.com/files/TC4092ilM.png";
-                    rightImage.src = "https://i.imghippo.com/files/bTT1071g.png";
-                }
-                // Fade in images
-                leftImage.style.opacity = '1';
-                rightImage.style.opacity = '1';
-            }, 500); // Match transition duration
-            
+            if (isGrosvenorToHQ) {
+                routeTitle.textContent = "Grosvenor to HQ in";
+                toggleButton.textContent = "🔄";
+            } else {
+                routeTitle.textContent = "HQ to Grosvenor in";
+                toggleButton.textContent = "🔄";
+            }
             updateCountdown();
         });
 
@@ -723,9 +689,6 @@
             updateSkyAndCelestial();
             updateCountdown();
             showFirstVisitPopup();
-            // Set initial opacity for images
-            document.getElementById('leftRouteImage').style.opacity = '1';
-            document.getElementById('rightRouteImage').style.opacity = '1';
         };
 
         setInterval(updateCountdown, 100);
