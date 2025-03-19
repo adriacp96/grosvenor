@@ -1,5 +1,3 @@
-Quiero que modifiques el código cambiando sólo lo que te voy a decir a continuación de él, el resultado tiene que ser un código que pueda copiar y pegar. En la ruta de Grosvenor to HQ, a la izquierda de la línea del bus, tiene que haber esta imagen (https://i.imghippo.com/files/bTT1071g.png) un poco más grande que el emoji del bus. En la derecha de la línea tiene que haber esta imagen (https://i.imghippo.com/files/TC4092ilM.png) un poco más grande que el emoji del bus. En la ruta de HQ a Grosvenor la foto que estaba en la izquierda ahora está en la derecha y en la izquierda tiene que estar la de la derecha. LAs imágenes tiene. que desvanecerse entre sí al cambiar de ruta.
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -112,6 +110,23 @@ Quiero que modifiques el código cambiando sólo lo que te voy a decir a continu
             left: 0;
             transform: scaleX(-1);
             transition: left 0.5s linear;
+        }
+        .route-image {
+            position: absolute;
+            top: -32px; /* Aligns the bottom of the 32px image with the top of the progress bar */
+            width: 32px; /* Slightly larger than the bus emoji (24px) */
+            height: 32px;
+            opacity: 1;
+            transition: opacity 0.5s ease; /* Fade transition */
+        }
+        .route-image.left {
+            left: -40px;
+        }
+        .route-image.right {
+            right: -40px;
+        }
+        .route-image.hidden {
+            opacity: 0;
         }
         #celestialBody {
             font-size: 60px;
@@ -320,6 +335,10 @@ Quiero que modifiques el código cambiando sólo lo que te voy a decir a continu
                 <div class="progress-fill" id="progressFill"></div>
             </div>
             <div class="bus-emoji" id="busEmoji">🚌</div>
+            <img src="https://i.imghippo.com/files/bTT1071g.png" alt="Grosvenor Icon" class="route-image left" id="grosvenorLeft">
+            <img src="https://i.imghippo.com/files/TC4092ilM.png" alt="HQ Icon" class="route-image right" id="hqRight">
+            <img src="https://i.imghippo.com/files/TC4092ilM.png" alt="HQ Icon" class="route-image left hidden" id="hqLeft">
+            <img src="https://i.imghippo.com/files/bTT1071g.png" alt="Grosvenor Icon" class="route-image right hidden" id="grosvenorRight">
         </div>
         <div class="button-container">
             <button id="toggleRoute">🔄</button>
@@ -589,6 +608,25 @@ Quiero que modifiques el código cambiando sólo lo que te voy a decir a continu
             }
         }
 
+        function updateRouteImages() {
+            const grosvenorLeft = document.getElementById('grosvenorLeft');
+            const hqRight = document.getElementById('hqRight');
+            const hqLeft = document.getElementById('hqLeft');
+            const grosvenorRight = document.getElementById('grosvenorRight');
+
+            if (isGrosvenorToHQ) {
+                grosvenorLeft.classList.remove('hidden');
+                hqRight.classList.remove('hidden');
+                hqLeft.classList.add('hidden');
+                grosvenorRight.classList.add('hidden');
+            } else {
+                hqLeft.classList.remove('hidden');
+                grosvenorRight.classList.remove('hidden');
+                grosvenorLeft.classList.add('hidden');
+                hqRight.classList.add('hidden');
+            }
+        }
+
         document.getElementById('toggleRoute').addEventListener('click', function() {
             isGrosvenorToHQ = !isGrosvenorToHQ;
             const routeTitle = document.getElementById('routeTitle');
@@ -601,6 +639,7 @@ Quiero que modifiques el código cambiando sólo lo que te voy a decir a continu
                 routeTitle.textContent = "HQ to Grosvenor in";
                 toggleButton.textContent = "🔄";
             }
+            updateRouteImages();
             updateCountdown();
         });
 
@@ -689,6 +728,7 @@ Quiero que modifiques el código cambiando sólo lo que te voy a decir a continu
             generateRandomDune();
             window.scrollTo(0, 0);
             updateSkyAndCelestial();
+            updateRouteImages();
             updateCountdown();
             showFirstVisitPopup();
         };
