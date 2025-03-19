@@ -73,6 +73,7 @@
             box-shadow: 0 0 10px rgba(0,0,0,0.3);
             z-index: 2;
             position: relative;
+            overflow: hidden; /* Asegura que los elementos no se salgan del contenedor */
         }
         #countdown {
             font-size: 2.5em;
@@ -113,7 +114,7 @@
         }
         .route-image {
             position: absolute;
-            top: -11px; /* Centra la imagen de 32px verticalmente sobre la barra de 10px */
+            top: -5px; /* Centra la imagen verticalmente sobre la barra de progreso */
             width: 32px; /* Slightly larger than the bus emoji (24px) */
             height: 32px;
             object-fit: contain; /* Mantiene las proporciones sin deformar */
@@ -121,10 +122,10 @@
             transition: opacity 0.5s ease; /* Fade transition */
         }
         .route-image.left {
-            left: -40px;
+            left: 0; /* Dentro del contenedor, alineado al borde izquierdo de la barra */
         }
         .route-image.right {
-            right: -40px;
+            right: 0; /* Dentro del contenedor, alineado al borde derecho de la barra */
         }
         .route-image.hidden {
             opacity: 0;
