@@ -111,6 +111,23 @@
             transform: scaleX(-1);
             transition: left 0.5s linear;
         }
+        .route-image {
+            position: absolute;
+            top: -30px;
+            width: 32px; /* Slightly larger than the bus emoji (24px) */
+            height: 32px;
+            opacity: 1;
+            transition: opacity 0.5s ease; /* Fade transition */
+        }
+        .route-image.left {
+            left: -40px;
+        }
+        .route-image.right {
+            right: -40px;
+        }
+        .route-image.hidden {
+            opacity: 0;
+        }
         #celestialBody {
             font-size: 60px;
             position: absolute;
@@ -317,7 +334,11 @@
             <div class="progress-bar">
                 <div class="progress-fill" id="progressFill"></div>
             </div>
-            <img src="https://i.imghippo.com/files/bTT1071g.png" class="bus-emoji" id="busEmoji" style="height: 24px;">
+            <div class="bus-emoji" id="busEmoji">🚌</div>
+            <img src="https://i.imghippo.com/files/bTT1071g.png" alt="Grosvenor Icon" class="route-image left" id="grosvenorLeft">
+            <img src="https://i.imghippo.com/files/TC4092ilM.png" alt="HQ Icon" class="route-image right" id="hqRight">
+            <img src="https://i.imghippo.com/files/TC4092ilM.png" alt="HQ Icon" class="route-image left hidden" id="hqLeft">
+            <img src="https://i.imghippo.com/files/bTT1071g.png" alt="Grosvenor Icon" class="route-image right hidden" id="grosvenorRight">
         </div>
         <div class="button-container">
             <button id="toggleRoute">🔄</button>
@@ -388,7 +409,7 @@
             "00:15", "00:35", "00:55", "01:15", "01:35", "01:55", "02:25", "02:55", "03:25", "03:55", 
             "04:20", "04:40", "05:00", "05:25", "05:45", "06:05", "06:25", "06:45", "07:10", "07:35", 
             "08:00", "08:25", "08:50", "09:20", "09:45", "10:10", "10:35", "11:00", "11:25", "11:50", 
-            "12:10", "12:30", "12:50", "13:10", "13:30", "13They50", "14:15", "14:40", "15:05", "15:30", 
+            "12:10", "12:30", "12:50", "13:10", "13:30", "13:50", "14:15", "14:40", "15:05", "15:30", 
             "15:55", "16:20", "16:45", "17:10", "17:35", "18:00", "18:25", "18:50", "19:15", "19:40", 
             "20:05", "20:30", "20:55", "21:20", "21:45", "22:10", "22:35", "23:00", "23:25", "23:50"
         ];
@@ -587,21 +608,38 @@
             }
         }
 
+        function updateRouteImages() {
+            const grosvenorLeft = document.getElementById('grosvenorLeft');
+            const hqRight = document.getElementById('hqRight');
+            const hqLeft = document.getElementById('hqLeft');
+            const grosvenorRight = document.getElementById('grosvenorRight');
+
+            if (isGrosvenorToHQ) {
+                grosvenorLeft.classList.remove('hidden');
+                hqRight.classList.remove('hidden');
+                hqLeft.classList.add('hidden');
+                grosvenorRight.classList.add('hidden');
+            } else {
+                hqLeft.classList.remove('hidden');
+                grosvenorRight.classList.remove('hidden');
+                grosvenorLeft.classList.add('hidden');
+                hqRight.classList.add('hidden');
+            }
+        }
+
         document.getElementById('toggleRoute').addEventListener('click', function() {
             isGrosvenorToHQ = !isGrosvenorToHQ;
             const routeTitle = document.getElementById('routeTitle');
             const toggleButton = document.getElementById('toggleRoute');
-            const busEmoji = document.getElementById('busEmoji');
             
             if (isGrosvenorToHQ) {
                 routeTitle.textContent = "Grosvenor to HQ in";
                 toggleButton.textContent = "🔄";
-                busEmoji.src = "https://i.imghippo.com/files/bTT1071g.png";
             } else {
                 routeTitle.textContent = "HQ to Grosvenor in";
                 toggleButton.textContent = "🔄";
-                busEmoji.src = "https://i.imghippo.com/files/TC4092ilM.png";
             }
+            updateRouteImages();
             updateCountdown();
         });
 
@@ -690,6 +728,7 @@
             generateRandomDune();
             window.scrollTo(0, 0);
             updateSkyAndCelestial();
+            updateRouteImages();
             updateCountdown();
             showFirstVisitPopup();
         };
