@@ -73,7 +73,6 @@
             box-shadow: 0 0 10px rgba(0,0,0,0.3);
             z-index: 2;
             position: relative;
-            overflow: hidden; /* Asegura que los elementos no se salgan del contenedor */
         }
         #countdown {
             font-size: 2.5em;
@@ -114,21 +113,19 @@
         }
         .route-image {
             position: absolute;
-            top: -5px; /* Centra la imagen verticalmente sobre la barra de progreso */
-            width: 32px; /* Slightly larger than the bus emoji (24px) */
-            height: 32px;
-            object-fit: contain; /* Mantiene las proporciones sin deformar */
-            opacity: 1;
-            transition: opacity 0.5s ease; /* Fade transition */
+            width: 32px; /* Slightly larger than bus emoji (24px) */
+            height: auto;
+            transition: opacity 0.5s ease;
         }
         .route-image.left {
-            left: 0; /* Dentro del contenedor, alineado al borde izquierdo de la barra */
+            left: 0;
+            bottom: 10px; /* Bottom aligned with top of progress bar */
+            transform: translateX(-50%);
         }
         .route-image.right {
-            right: 0; /* Dentro del contenedor, alineado al borde derecho de la barra */
-        }
-        .route-image.hidden {
-            opacity: 0;
+            right: 0;
+            bottom: 10px; /* Bottom aligned with top of progress bar */
+            transform: translateX(50%);
         }
         #celestialBody {
             font-size: 60px;
@@ -337,10 +334,8 @@
                 <div class="progress-fill" id="progressFill"></div>
             </div>
             <div class="bus-emoji" id="busEmoji">🚌</div>
-            <img src="https://i.imghippo.com/files/bTT1071g.png" alt="Grosvenor Icon" class="route-image left" id="grosvenorLeft">
-            <img src="https://i.imghippo.com/files/TC4092ilM.png" alt="HQ Icon" class="route-image right" id="hqRight">
-            <img src="https://i.imghippo.com/files/TC4092ilM.png" alt="HQ Icon" class="route-image left hidden" id="hqLeft">
-            <img src="https://i.imghippo.com/files/bTT1071g.png" alt="Grosvenor Icon" class="route-image right hidden" id="grosvenorRight">
+            <img src="https://i.imghippo.com/files/bTT1071g.png" alt="Left Route" id="leftRouteImage" class="route-image left">
+            <img src="https://i.imghippo.com/files/TC4092ilM.png" alt="Right Route" id="rightRouteImage" class="route-image right">
         </div>
         <div class="button-container">
             <button id="toggleRoute">🔄</button>
@@ -610,38 +605,34 @@
             }
         }
 
-        function updateRouteImages() {
-            const grosvenorLeft = document.getElementById('grosvenorLeft');
-            const hqRight = document.getElementById('hqRight');
-            const hqLeft = document.getElementById('hqLeft');
-            const grosvenorRight = document.getElementById('grosvenorRight');
-
-            if (isGrosvenorToHQ) {
-                grosvenorLeft.classList.remove('hidden');
-                hqRight.classList.remove('hidden');
-                hqLeft.classList.add('hidden');
-                grosvenorRight.classList.add('hidden');
-            } else {
-                hqLeft.classList.remove('hidden');
-                grosvenorRight.classList.remove('hidden');
-                grosvenorLeft.classList.add('hidden');
-                hqRight.classList.add('hidden');
-            }
-        }
-
         document.getElementById('toggleRoute').addEventListener('click', function() {
             isGrosvenorToHQ = !isGrosvenorToHQ;
             const routeTitle = document.getElementById('routeTitle');
             const toggleButton = document.getElementById('toggleRoute');
+            const leftImage = document.getElementById('leftRouteImage');
+            const rightImage = document.getElementById('rightRouteImage');
             
-            if (isGrosvenorToHQ) {
-                routeTitle.textContent = "Grosvenor to HQ in";
-                toggleButton.textContent = "🔄";
-            } else {
-                routeTitle.textContent = "HQ to Grosvenor in";
-                toggleButton.textContent = "🔄";
-            }
-            updateRouteImages();
+            // Fade out images
+ Ursula            leftImage.style.opacity = '0';
+            rightImage.style.opacity = '0';
+            
+            setTimeout(() => {
+                if (isGrosvenorToHQ) {
+                    routeTitle.textContent = "Grosvenor to HQ in";
+                    toggleButton.textContent = "🔄";
+                    leftImage.src = "https://i.imghippo.com/files/bTT1071g.png";
+                    rightImage.src = "https://i.imghippo.com/files/TC4092ilM.png";
+                } else {
+                    routeTitle.textContent = "HQ to Grosvenor in";
+                    toggleButton.textContent = "🔄";
+                    leftImage.src = "https://i.imghippo.com/files/TC4092ilM.png";
+                    rightImage.src = "https://i.imghippo.com/files/bTT1071g.png";
+                }
+                // Fade in images
+                leftImage.style.opacity = '1';
+                rightImage.style.opacity = '1';
+            }, 500); // Match transition duration
+            
             updateCountdown();
         });
 
@@ -730,9 +721,11 @@
             generateRandomDune();
             window.scrollTo(0, 0);
             updateSkyAndCelestial();
-            updateRouteImages();
             updateCountdown();
             showFirstVisitPopup();
+            // Set initial opacity for images
+            document.getElementById('leftRouteImage').style.opacity = '1';
+            document.getElementById('rightRouteImage').style.opacity = '1';
         };
 
         setInterval(updateCountdown, 100);
