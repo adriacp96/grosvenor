@@ -35,7 +35,7 @@
             z-index: 0;
         }
         body {
-            font-family: 'Emirates Bold', Helvetica, Arial, sans-serif;
+            font-family: 'Emirates Bold';
             margin: 0;
             padding: 0;
             height: 100vh;
@@ -183,7 +183,7 @@
             gap: 10px;
         }
         .input-container span {
-            font-family: 'Emirates Bold', sans-serif;
+            font-family: 'Emirates Bold';
             font-size: 1.2em;
             color: #2c3e50;
         }
@@ -220,7 +220,7 @@
         #eGateButton {
             padding: 0 20px;
             font-size: 1.2em;
-            font-family: 'Emirates Bold', sans-serif;
+            font-family: 'Emirates Bold';
             background: white;
             color: #2c3e50;
             border: none;
@@ -236,7 +236,6 @@
         #eGateButton:hover {
             transform: scale(1.05);
         }
-        /* Popup Styles */
         #firstVisitPopup {
             display: none;
             position: fixed;
@@ -278,9 +277,9 @@
             text-align: center;
         }
         #firstVisitPopup .icon {
-            height: 1em; /* Ajusta la altura al tamaño de la línea de texto */
-            margin-right: 8px; /* Espaciado ajustado */
-            vertical-align: middle; /* Alineación vertical con el texto */
+            height: 1em;
+            margin-right: 8px;
+            vertical-align: middle;
         }
         #closePopup {
             padding: 5px 15px;
@@ -295,7 +294,6 @@
         #closePopup:hover {
             background-color: #34495e;
         }
-        /* Black background when popup is active */
         .black-background::before {
             content: '';
             position: fixed;
@@ -337,7 +335,6 @@
     <div id="celestialBody">☀️</div>
     <div class="stars-container" id="starsContainer"></div>
 
-    <!-- Popup for first visit -->
     <div id="firstVisitPopup">
         <h2>Add to Home Screen</h2>
         <p>To install this app on your iPhone:</p>
@@ -625,7 +622,6 @@
             document.querySelector('.input-container').style.display = 'flex';
         });
 
-        // Popup logic with black background
         function showFirstVisitPopup() {
             const isPWA = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
             const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
@@ -668,7 +664,6 @@
             }
         }, { passive: false });
 
-        // Calendar JavaScript
         const calendarWindow = document.getElementById('calendar-window');
         const calendarTitleBar = document.getElementById('title-bar');
         const calendarToggleDayButton = document.getElementById('toggle-day');
@@ -944,22 +939,20 @@
     </script>
     <svg class="dune" viewBox="0 0 1000 250" preserveAspectRatio="none">
     <defs>
-        <!-- Gradiente para la textura de la duna -->
         <linearGradient id="duneGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-            <stop offset="0%" style="stop-color:#f4e4bc;stop-opacity:1" /> <!-- Arena clara en la cima -->
-            <stop offset="50%" style="stop-color:#edc9af;stop-opacity:1" /> <!-- Tono medio -->
-            <stop offset="100%" style="stop-color:#d2a679;stop-opacity:0.8" /> <!-- Sombra en la base -->
+            <stop offset="0%" style="stop-color:#f4e4bc;stop-opacity:1" />
+            <stop offset="50%" style="stop-color:#edc9af;stop-opacity:1" />
+            <stop offset="100%" style="stop-color:#d2a679;stop-opacity:0.8" />
         </linearGradient>
     </defs>
-    <!-- Curva de la duna con forma orgánica -->
     <path class="dune-gradient" d="
-    M0,250
-    C120,225 320,130 430,80
-    C540,50 680,110 860,190
-    C930,220 1000,235 1000,250
-    L1000,250
-    L0,250
-    Z" />
+        M0,250
+        C120,225 320,130 430,80
+        C540,50 680,110 860,190
+        C930,220 1000,235 1000,250
+        L1000,250
+        L0,250
+        Z" />
 </svg>
 </body>
 </html>
