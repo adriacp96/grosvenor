@@ -111,21 +111,25 @@
             transform: scaleX(-1);
             transition: left 0.5s linear;
         }
+        .dune {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 25vh;
+            z-index: 0;
+            pointer-events: none;
+            opacity: 0.5;
+        }
+        .dune-gradient {
+            fill: url(#duneGradient);
+        }
         #celestialBody {
             font-size: 60px;
             position: absolute;
             transition: none;
             z-index: 1;
             opacity: 1;
-            pointer-events: none;
-        }
-        .dunes {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 25vh;
-            z-index: 1;
             pointer-events: none;
         }
         .button-container {
@@ -331,9 +335,6 @@
         <div id="closestTimes"></div>
     </div>
     <div id="celestialBody">☀️</div>
-    <svg class="dunes" viewBox="0 0 1000 250" preserveAspectRatio="none">
-        <path id="dunePath" fill="rgba(237, 201, 175, 0.4)" />
-    </svg>
     <div class="stars-container" id="starsContainer"></div>
 
     <!-- Popup for first visit -->
@@ -357,7 +358,6 @@
     </div>
 
     <script>
-        let dunePoints = [];
         let isGrosvenorToHQ = true;
         let starsCreated = false;
 
@@ -393,48 +393,6 @@
             "20:05", "20:30", "20:55", "21:20", "21:45", "22:10", "22:35", "23:00", "23:25", "23:50"
         ];
 
-        function generateRandomDune() {
-            const segments = 4;
-            const width = 1000;
-            const segmentWidth = width / segments;
-            let path = "M0,250";
-            dunePoints = [{ x: 0, y: 250 }];
-
-            for (let i = 1; i <= segments; i++) {
-                const x1 = (i - 0.66) * segmentWidth;
-                const y1 = 250 - Math.random() * 130;
-                const x2 = (i - 0.33) * segmentWidth;
-                const y2 = 250 - Math.random() * 130;
-                const x3 = i * segmentWidth;
-                const y3 = i === segments ? 250 : 250 - Math.random() * 130;
-
-                path += ` C${x1},${y1} ${x2},${y2} ${x3},${y3}`;
-                dunePoints.push({ x: x1, y: y1 }, { x: x2, y: y2 }, { x: x3, y: y3 });
-            }
-
-            path += " L0,250 Z";
-            document.getElementById("dunePath").setAttribute("d", path);
-        }
-
-        function getBezierY(t, p0, p1, p2, p3) {
-            const mt = 1 - t;
-            return Math.pow(mt, 3) * p0.y + 3 * Math.pow(mt, 2) * t * p1.y + 
-                   3 * mt * Math.pow(t, 2) * p2.y + Math.pow(t, 3) * p3.y;
-        }
-
-        function getDuneHeight(x) {
-            for (let i = 0; i < dunePoints.length - 3; i += 3) {
-                const p0 = dunePoints[i];
-                const p1 = dunePoints[i + 1];
-                const p2 = dunePoints[i + 2];
-                const p3 = dunePoints[i + 3];
-                if (x >= p0.x && x <= p3.x) {
-                    const t = (x - p0.x) / (p3.x - p0.x);
-                    return getBezierY(t, p0, p1, p2, p3);
-                }
-            }
-            return 250;
-        }
 
         function getBusTimes() {
             const currentSchedule = isGrosvenorToHQ ? grosvenorToHQSchedule.map(item => item.gros) : hqToGrosvenorSchedule;
@@ -686,7 +644,6 @@
         });
 
         window.onload = function() {
-            generateRandomDune();
             window.scrollTo(0, 0);
             updateSkyAndCelestial();
             updateCountdown();
@@ -985,5 +942,24 @@
             fetchCalendarEvents();
         }, 300000);
     </script>
+    <svg class="dune" viewBox="0 0 1000 250" preserveAspectRatio="none">
+    <defs>
+        <!-- Gradiente para la textura de la duna -->
+        <linearGradient id="duneGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+            <stop offset="0%" style="stop-color:#f4e4bc;stop-opacity:1" /> <!-- Arena clara en la cima -->
+            <stop offset="50%" style="stop-color:#edc9af;stop-opacity:1" /> <!-- Tono medio -->
+            <stop offset="100%" style="stop-color:#d2a679;stop-opacity:0.8" /> <!-- Sombra en la base -->
+        </linearGradient>
+    </defs>
+    <!-- Curva de la duna con forma orgánica -->
+    <path class="dune-gradient" d="
+    M0,250
+    C120,225 320,130 430,80
+    C540,50 680,110 860,190
+    C930,220 1000,235 1000,250
+    L1000,250
+    L0,250
+    Z" />
+</svg>
 </body>
 </html>
