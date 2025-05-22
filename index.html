@@ -691,6 +691,14 @@
                 createStars();
             }
         };
+
+        let intervalId = null;
+        function startUpdateLoop() {
+            if (intervalId) clearInterval(intervalId);
+            intervalId = setInterval(updateCountdown, 100);
+        }
+
+        startUpdateLoop();
     </script>
     <svg class="dune" viewBox="0 0 1000 250" preserveAspectRatio="none">
     <defs>
