@@ -16,6 +16,7 @@
             font-style: normal;
         }
 
+        /* --- CAMBIO 1: Asegurar que el HTML base cubra todo y tenga un color de fondo para evitar el "flash blanco" --- */
         html {
             height: 100%;
             width: 100%;
@@ -23,39 +24,39 @@
             padding: 0;
             overflow: hidden;
             touch-action: none;
+            background-color: #191970; /* Color base del gradiente */
         }
-        #background-container {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            min-height: 100%;
-            background: linear-gradient(to bottom, #191970, #000080);
-            background-size: cover;
-            background-attachment: fixed;
-            z-index: 0;
-            transition: background 5s ease;
-        }
+
+        /* --- CAMBIO 2: Se elimina el CSS para #background-container --- */
+
+        /* --- CAMBIO 3: Se aplica el fondo directamente al BODY --- */
         body {
             font-family: 'Emirates Bold';
             margin: 0;
-            padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
-            height: 100vh;
+            padding: 0; /* El padding se gestionará en los hijos si es necesario */
+            
+            /* El body ahora ocupa toda la altura y tiene el fondo */
             width: 100%;
+            min-height: 100vh; /* Asegura que cubra toda la altura visible */
+            background: linear-gradient(to bottom, #191970, #000080);
+            background-size: cover;
+            background-attachment: fixed;
+
+            /* Mantenemos Flexbox para centrar el contenido principal */
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
+            
             position: relative;
-            z-index: 1;
             overflow: hidden;
             touch-action: none;
-            padding-top: env(safe-area-inset-top);
-            padding-bottom: env(safe-area-inset-bottom);
             box-sizing: border-box;
         }
+
         .emirates-logo {
             position: absolute;
+            /* Se ajusta para respetar el área segura inferior */
             bottom: calc(20px + env(safe-area-inset-bottom));
             left: 50%;
             transform: translateX(-50%);
@@ -68,6 +69,7 @@
             border-radius: 10px;
             box-shadow: 0 0 10px rgba(0,0,0,0.3);
         }
+
         .container {
             text-align: center;
             background-color: rgba(255, 255, 255, 0.9);
@@ -76,7 +78,12 @@
             box-shadow: 0 0 10px rgba(0,0,0,0.3);
             z-index: 2;
             position: relative;
+            /* --- CAMBIO 4: Añadimos márgenes para respetar las áreas seguras --- */
+            /* Esto empuja el contenedor lejos de los bordes, pero no afecta al fondo del body */
+            margin-top: env(safe-area-inset-top);
+            margin-bottom: env(safe-area-inset-bottom);
         }
+
         #countdown {
             font-size: 2.5em;
             color: #2c3e50;
@@ -308,11 +315,11 @@
             z-index: 999;
             transition: opacity 0.3s ease;
         }
+
     </style>
 </head>
 <body>
-    <div id="background-container"></div>
-    <img src="https://upload.wikimedia.org/wikipedia/commons/archive/d/d0/20250508163912%21Emirates_logo.svg" 
+    <img src="https://upload.wikimedia.org/wikipedia/commons/archive/d/d0/20250508163912%21Emirates_logo.svg"
          alt="Emirates Logo" class="emirates-logo">
     <div class="container">
         <h1 id="routeTitle">Grosvenor to HQ in</h1>
@@ -351,6 +358,7 @@
                 Select "Add to Home Screen"
             </li>
             <li>
+                <img src="https://cdn-icons-png.flaticon.com/128/3161/3161837.png" alt="Add to Home Screen Icon" class="icon">
                 Tap "Add" in the top-right corner
             </li>
         </ul>
@@ -358,6 +366,7 @@
     </div>
 
     <script>
+        // Tu JavaScript no necesita cambios
         let isGrosvenorToHQ = true;
         let starsCreated = false;
 
@@ -385,11 +394,11 @@
         ];
 
         const hqToGrosvenorSchedule = [
-            "00:15", "00:35", "00:55", "01:15", "01:35", "01:55", "02:25", "02:55", "03:25", "03:55", 
-            "04:20", "04:40", "05:00", "05:25", "05:45", "06:05", "06:25", "06:45", "07:10", "07:35", 
-            "08:00", "08:25", "08:50", "09:20", "09:45", "10:10", "10:35", "11:00", "11:25", "11:50", 
-            "12:10", "12:30", "12:50", "13:10", "13:30", "13:50", "14:15", "14:40", "15:05", "15:30", 
-            "15:55", "16:20", "16:45", "17:10", "17:35", "18:00", "18:25", "18:50", "19:15", "19:40", 
+            "00:15", "00:35", "00:55", "01:15", "01:35", "01:55", "02:25", "02:55", "03:25", "03:55",
+            "04:20", "04:40", "05:00", "05:25", "05:45", "06:05", "06:25", "06:45", "07:10", "07:35",
+            "08:00", "08:25", "08:50", "09:20", "09:45", "10:10", "10:35", "11:00", "11:25", "11:50",
+            "12:10", "12:30", "12:50", "13:10", "13:30", "13:50", "14:15", "14:40", "15:05", "15:30",
+            "15:55", "16:20", "16:45", "17:10", "17:35", "18:00", "18:25", "18:50", "19:15", "19:40",
             "20:05", "20:30", "20:55", "21:20", "21:45", "22:10", "22:35", "23:00", "23:25", "23:50"
         ];
 
@@ -407,8 +416,8 @@
 
                 if (busTimeInMinutes > currentTimeInMinutes) {
                     nextBus = { time: currentSchedule[i], minutes: busTimeInMinutes };
-                    previousBus = { 
-                        time: currentSchedule[i-1] || currentSchedule[currentSchedule.length-1], 
+                    previousBus = {
+                        time: currentSchedule[i-1] || currentSchedule[currentSchedule.length-1],
                         minutes: (i-1 >= 0 ? currentSchedule[i-1] : currentSchedule[currentSchedule.length-1])
                             .split(':').map(Number).reduce((h,m) => h*60 + m)
                     };
@@ -417,11 +426,11 @@
             }
 
             if (!nextBus.minutes) {
-                nextBus = { time: currentSchedule[0], minutes: currentSchedule[0].split(':').map(Number)[0] * 60 + 
-                           currentSchedule[0].split(':').map(Number)[1] + 1440 };
-                previousBus = { time: currentSchedule[currentSchedule.length-1], 
-                              minutes: currentSchedule[currentSchedule.length-1].split(':').map(Number)[0] * 60 + 
-                              currentSchedule[currentSchedule.length-1].split(':').map(Number)[1] };
+                nextBus = { time: currentSchedule[0], minutes: currentSchedule[0].split(':').map(Number)[0] * 60 +
+                                currentSchedule[0].split(':').map(Number)[1] + 1440 };
+                previousBus = { time: currentSchedule[currentSchedule.length-1],
+                                    minutes: currentSchedule[currentSchedule.length-1].split(':').map(Number)[0] * 60 +
+                                    currentSchedule[currentSchedule.length-1].split(':').map(Number)[1] };
             }
 
             return { previousBus, nextBus };
@@ -435,7 +444,7 @@
 
     const celestial = document.getElementById('celestialBody');
     const starsContainer = document.getElementById('starsContainer');
-    let gradient;
+    let newGradient;
 
     // Define time periods (in minutes since midnight)
     const sunriseStart = 5 * 60; // 5:00 AM
@@ -461,7 +470,7 @@
         const factor = (totalMinutes - sunriseStart) / (sunriseEnd - sunriseStart);
         const topColor = interpolateColor('#ff4500', '#ffd700', factor); // Orange to yellow
         const bottomColor = interpolateColor('#ff69b4', '#87ceeb', factor); // Pink to light blue
-        gradient = `linear-gradient(to bottom, ${topColor}, ${bottomColor})`;
+        newGradient = `linear-gradient(to bottom, ${topColor}, ${bottomColor})`;
         celestial.textContent = '☀️';
         starsContainer.style.display = 'none';
     } else if (totalMinutes >= sunriseEnd && totalMinutes < dayEnd) {
@@ -469,7 +478,7 @@
         const factor = (totalMinutes - sunriseEnd) / (dayEnd - sunriseEnd);
         const topColor = interpolateColor('#87ceeb', '#4682b4', factor); // Light to medium blue
         const bottomColor = interpolateColor('#b0e0e6', '#1e90ff', factor); // Cyan to deep blue
-        gradient = `linear-gradient(to bottom, ${topColor}, ${bottomColor})`;
+        newGradient = `linear-gradient(to bottom, ${topColor}, ${bottomColor})`;
         celestial.textContent = '☀️';
         starsContainer.style.display = 'none';
     } else if (totalMinutes >= dayEnd && totalMinutes < sunsetEnd) {
@@ -477,7 +486,7 @@
         const factor = (totalMinutes - dayEnd) / (sunsetEnd - dayEnd);
         const topColor = interpolateColor('#ffd700', '#ff4500', factor); // Yellow to orange-red
         const bottomColor = interpolateColor('#ff8c00', '#4b0082', factor); // Orange to indigo
-        gradient = `linear-gradient(to bottom, ${topColor}, ${bottomColor})`;
+        newGradient = `linear-gradient(to bottom, ${topColor}, ${bottomColor})`;
         celestial.textContent = '☀️';
         starsContainer.style.display = 'none';
     } else {
@@ -485,7 +494,7 @@
         const factor = ((totalMinutes < sunriseStart ? totalMinutes + 1440 : totalMinutes) - sunsetEnd) / (sunriseStart + 1440 - sunsetEnd);
         const topColor = interpolateColor('#191970', '#000033', factor); // Midnight blue to darker blue
         const bottomColor = interpolateColor('#000080', '#1c2526', factor); // Navy to dark teal
-        gradient = `linear-gradient(to bottom, ${topColor}, ${bottomColor})`;
+        newGradient = `linear-gradient(to bottom, ${topColor}, ${bottomColor})`;
         celestial.textContent = '🌙';
         starsContainer.style.display = 'block';
         if (!starsCreated) {
@@ -494,10 +503,10 @@
         }
     }
 
-    // Apply gradient with smooth transition
-    const backgroundContainer = document.getElementById('background-container');
-    backgroundContainer.style.transition = 'background 5s ease';
-    backgroundContainer.style.background = gradient;
+    // Apply gradient with smooth transition to the BODY
+    document.body.style.transition = 'background 5s ease';
+    document.body.style.background = newGradient;
+
 
     // Update celestial body position
     let progress;
@@ -530,7 +539,7 @@
             const minutes = Math.floor(timeDifference % 60);
             const seconds = Math.floor((timeDifference * 60) % 60);
 
-            document.getElementById('countdown').textContent = 
+            document.getElementById('countdown').textContent =
                 `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
             document.getElementById('nextBus').textContent = `Next bus at: ${nextBus.time}`;
 
