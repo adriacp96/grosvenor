@@ -16,7 +16,7 @@
             font-style: normal;
         }
 
-        /* --- CAMBIO 1: Asegurar que el HTML base cubra todo y tenga un color de fondo para evitar el "flash blanco" --- */
+        /* Asegurar que el HTML base cubra todo y tenga un color de fondo para evitar el "flash blanco" */
         html {
             height: 100%;
             width: 100%;
@@ -24,17 +24,13 @@
             padding: 0;
             overflow: hidden;
             touch-action: none;
-            background-color: #191970; /* Color base del gradiente */
+            background-color: #191970; /* Color base del gradiente para evitar el flash */
         }
 
-        /* --- CAMBIO 2: Se elimina el CSS para #background-container --- */
-
-        /* --- CAMBIO 3: Se aplica el fondo directamente al BODY --- */
         body {
             font-family: 'Emirates Bold';
             margin: 0;
-            padding: 0; /* El padding se gestionará en los hijos si es necesario */
-            
+            padding: 0;
             /* El body ahora ocupa toda la altura y tiene el fondo */
             width: 100%;
             min-height: 100vh; /* Asegura que cubra toda la altura visible */
@@ -42,7 +38,6 @@
             background-size: cover;
             background-attachment: fixed;
 
-            /* Mantenemos Flexbox para centrar el contenido principal */
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -56,7 +51,6 @@
 
         .emirates-logo {
             position: absolute;
-            /* Se ajusta para respetar el área segura inferior */
             bottom: calc(20px + env(safe-area-inset-bottom));
             left: 50%;
             transform: translateX(-50%);
@@ -78,10 +72,9 @@
             box-shadow: 0 0 10px rgba(0,0,0,0.3);
             z-index: 2;
             position: relative;
-            /* --- CAMBIO 4: Añadimos márgenes para respetar las áreas seguras --- */
-            /* Esto empuja el contenedor lejos de los bordes, pero no afecta al fondo del body */
-            margin-top: env(safe-area-inset-top);
-            margin-bottom: env(safe-area-inset-bottom);
+            /* Eliminamos los márgenes para que el fondo cubra completamente el área de la pantalla */
+            /* margin-top: env(safe-area-inset-top); */
+            /* margin-bottom: env(safe-area-inset-bottom); */
         }
 
         #countdown {
@@ -320,7 +313,7 @@
 </head>
 <body>
     <img src="https://upload.wikimedia.org/wikipedia/commons/archive/d/d0/20250508163912%21Emirates_logo.svg"
-         alt="Emirates Logo" class="emirates-logo">
+            alt="Emirates Logo" class="emirates-logo">
     <div class="container">
         <h1 id="routeTitle">Grosvenor to HQ in</h1>
         <div id="countdown">00:00</div>
@@ -366,7 +359,6 @@
     </div>
 
     <script>
-        // Tu JavaScript no necesita cambios
         let isGrosvenorToHQ = true;
         let starsCreated = false;
 
@@ -402,129 +394,164 @@
             "20:05", "20:30", "20:55", "21:20", "21:45", "22:10", "22:35", "23:00", "23:25", "23:50"
         ];
 
-
+        // --- INICIO DE CAMBIOS EN JAVASCRIPT ---
         function getBusTimes() {
             const currentSchedule = isGrosvenorToHQ ? grosvenorToHQSchedule.map(item => item.gros) : hqToGrosvenorSchedule;
             const now = new Date();
             const currentTimeInMinutes = now.getHours() * 60 + now.getMinutes() + (now.getSeconds() + now.getMilliseconds() / 1000) / 60;
-            let previousBus = { time: currentSchedule[currentSchedule.length - 1], minutes: 0 };
-            let nextBus = { time: currentSchedule[0], minutes: 0 };
 
-            for (let i = 0; i < currentSchedule.length; i++) {
-                const [hours, minutes] = currentSchedule[i].split(':').map(Number);
-                const busTimeInMinutes = hours * 60 + minutes;
+            let nextBus = null;
+            let previousBus = null;
 
-                if (busTimeInMinutes > currentTimeInMinutes) {
-                    nextBus = { time: currentSchedule[i], minutes: busTimeInMinutes };
-                    previousBus = {
-                        time: currentSchedule[i-1] || currentSchedule[currentSchedule.length-1],
-                        minutes: (i-1 >= 0 ? currentSchedule[i-1] : currentSchedule[currentSchedule.length-1])
-                            .split(':').map(Number).reduce((h,m) => h*60 + m)
+            // Duplicar el horario para manejar el paso de la medianoche
+            // Convertimos a minutos y añadimos los horarios del día siguiente sumando 1440 minutos (24 horas)
+            const extendedSchedule = currentSchedule.map(timeStr => {
+                const [h, m] = timeStr.split(':').map(Number);
+                return h * 60 + m;
+            }).sort((a, b) => a - b); // Asegurar que estén ordenados
+
+            const scheduleWithNextDay = [...extendedSchedule];
+            extendedSchedule.forEach(minutes => {
+                scheduleWithNextDay.push(minutes + 1440); // Añade 24 horas para el día siguiente
+            });
+
+            // Encontrar el próximo autobús
+            for (const busTimeMinutes of scheduleWithNextDay) {
+                if (busTimeMinutes > currentTimeInMinutes) {
+                    nextBus = {
+                        time: `${String(Math.floor(busTimeMinutes / 60) % 24).padStart(2, '0')}:${String(busTimeMinutes % 60).padStart(2, '0')}`,
+                        minutes: busTimeMinutes
                     };
                     break;
                 }
             }
 
-            if (!nextBus.minutes) {
-                nextBus = { time: currentSchedule[0], minutes: currentSchedule[0].split(':').map(Number)[0] * 60 +
-                                currentSchedule[0].split(':').map(Number)[1] + 1440 };
-                previousBus = { time: currentSchedule[currentSchedule.length-1],
-                                    minutes: currentSchedule[currentSchedule.length-1].split(':').map(Number)[0] * 60 +
-                                    currentSchedule[currentSchedule.length-1].split(':').map(Number)[1] };
+            // Si por alguna razón no se encuentra un nextBus (ej. es el último del día), se toma el primero del día siguiente
+            if (!nextBus) {
+                const firstBusMinutes = extendedSchedule[0];
+                nextBus = {
+                    time: `${String(Math.floor(firstBusMinutes / 60) % 24).padStart(2, '0')}:${String(firstBusMinutes % 60).padStart(2, '0')}`,
+                    minutes: firstBusMinutes + 1440 // Asumir que es el del día siguiente
+                };
+            }
+
+            // Encontrar el autobús anterior basado en el nextBus encontrado
+            let tempPreviousBusMinutes = 0;
+            for (let i = scheduleWithNextDay.length - 1; i >= 0; i--) {
+                if (scheduleWithNextDay[i] < nextBus.minutes) {
+                    tempPreviousBusMinutes = scheduleWithNextDay[i];
+                    break;
+                }
+            }
+            
+            // Si el autobús anterior es del día anterior y nextBus es del día actual, ajustamos previousBus
+            if (nextBus.minutes < currentTimeInMinutes + 60 && tempPreviousBusMinutes > nextBus.minutes) {
+                // Esta condición verifica si nextBus es del día siguiente y previousBus encontrado es el último del día anterior
+                // Le restamos 1440 para que represente el horario correcto del día anterior.
+                previousBus = {
+                    time: `${String(Math.floor((tempPreviousBusMinutes - 1440) / 60) % 24).padStart(2, '0')}:${String((tempPreviousBusMinutes - 1440) % 60).padStart(2, '0')}`,
+                    minutes: tempPreviousBusMinutes - 1440
+                };
+            } else {
+                previousBus = {
+                    time: `${String(Math.floor(tempPreviousBusMinutes / 60) % 24).padStart(2, '0')}:${String(tempPreviousBusMinutes % 60).padStart(2, '0')}`,
+                    minutes: tempPreviousBusMinutes
+                };
             }
 
             return { previousBus, nextBus };
         }
+        // --- FIN DE CAMBIOS EN JAVASCRIPT ---
 
         function updateSkyAndCelestial() {
-    const now = new Date();
-    const hours = now.getHours();
-    const minutes = now.getMinutes();
-    const totalMinutes = hours * 60 + minutes;
+            const now = new Date();
+            const hours = now.getHours();
+            const minutes = now.getMinutes();
+            const totalMinutes = hours * 60 + minutes;
 
-    const celestial = document.getElementById('celestialBody');
-    const starsContainer = document.getElementById('starsContainer');
-    let newGradient;
+            const celestial = document.getElementById('celestialBody');
+            const starsContainer = document.getElementById('starsContainer');
+            let newGradient;
 
-    // Define time periods (in minutes since midnight)
-    const sunriseStart = 5 * 60; // 5:00 AM
-    const sunriseEnd = 7 * 60; // 7:00 AM
-    const dayEnd = 17 * 60; // 5:00 PM
-    const sunsetEnd = 19 * 60; // 7:00 PM
-    const dayLength = 12 * 60; // For celestial movement
+            // Define time periods (in minutes since midnight)
+            const sunriseStart = 5 * 60; // 5:00 AM
+            const sunriseEnd = 7 * 60; // 7:00 AM
+            const dayEnd = 17 * 60; // 5:00 PM
+            const sunsetEnd = 19 * 60; // 7:00 PM
+            const dayLength = 12 * 60; // For celestial movement
 
-    // Helper function to interpolate between two colors
-    function interpolateColor(color1, color2, factor) {
-        const result = color1.slice(1).match(/.{2}/g).map((hex, i) => {
-            const c1 = parseInt(hex, 16);
-            const c2 = parseInt(color2.slice(1).match(/.{2}/g)[i], 16);
-            const value = Math.round(c1 + (c2 - c1) * factor);
-            return value.toString(16).padStart(2, '0');
-        });
-        return `#${result.join('')}`;
-    }
+            // Helper function to interpolate between two colors
+            function interpolateColor(color1, color2, factor) {
+                const result = color1.slice(1).match(/.{2}/g).map((hex, i) => {
+                    const c1 = parseInt(hex, 16);
+                    const c2 = parseInt(color2.slice(1).match(/.{2}/g)[i], 16);
+                    const value = Math.round(c1 + (c2 - c1) * factor);
+                    return value.toString(16).padStart(2, '0');
+                });
+                return `#${result.join('')}`;
+            }
 
-    // Determine time period and set gradient
-    if (totalMinutes >= sunriseStart && totalMinutes < sunriseEnd) {
-        // Sunrise: Warm orange, pink, yellow
-        const factor = (totalMinutes - sunriseStart) / (sunriseEnd - sunriseStart);
-        const topColor = interpolateColor('#ff4500', '#ffd700', factor); // Orange to yellow
-        const bottomColor = interpolateColor('#ff69b4', '#87ceeb', factor); // Pink to light blue
-        newGradient = `linear-gradient(to bottom, ${topColor}, ${bottomColor})`;
-        celestial.textContent = '☀️';
-        starsContainer.style.display = 'none';
-    } else if (totalMinutes >= sunriseEnd && totalMinutes < dayEnd) {
-        // Daytime: Bright blue tones
-        const factor = (totalMinutes - sunriseEnd) / (dayEnd - sunriseEnd);
-        const topColor = interpolateColor('#87ceeb', '#4682b4', factor); // Light to medium blue
-        const bottomColor = interpolateColor('#b0e0e6', '#1e90ff', factor); // Cyan to deep blue
-        newGradient = `linear-gradient(to bottom, ${topColor}, ${bottomColor})`;
-        celestial.textContent = '☀️';
-        starsContainer.style.display = 'none';
-    } else if (totalMinutes >= dayEnd && totalMinutes < sunsetEnd) {
-        // Sunset: Reddish, golden, purple
-        const factor = (totalMinutes - dayEnd) / (sunsetEnd - dayEnd);
-        const topColor = interpolateColor('#ffd700', '#ff4500', factor); // Yellow to orange-red
-        const bottomColor = interpolateColor('#ff8c00', '#4b0082', factor); // Orange to indigo
-        newGradient = `linear-gradient(to bottom, ${topColor}, ${bottomColor})`;
-        celestial.textContent = '☀️';
-        starsContainer.style.display = 'none';
-    } else {
-        // Night: Deep blue and indigo
-        const factor = ((totalMinutes < sunriseStart ? totalMinutes + 1440 : totalMinutes) - sunsetEnd) / (sunriseStart + 1440 - sunsetEnd);
-        const topColor = interpolateColor('#191970', '#000033', factor); // Midnight blue to darker blue
-        const bottomColor = interpolateColor('#000080', '#1c2526', factor); // Navy to dark teal
-        newGradient = `linear-gradient(to bottom, ${topColor}, ${bottomColor})`;
-        celestial.textContent = '🌙';
-        starsContainer.style.display = 'block';
-        if (!starsCreated) {
-            createStars();
-            starsCreated = true;
+            // Determine time period and set gradient
+            if (totalMinutes >= sunriseStart && totalMinutes < sunriseEnd) {
+                // Sunrise: Warm orange, pink, yellow
+                const factor = (totalMinutes - sunriseStart) / (sunriseEnd - sunriseStart);
+                const topColor = interpolateColor('#ff4500', '#ffd700', factor); // Orange to yellow
+                const bottomColor = interpolateColor('#ff69b4', '#87ceeb', factor); // Pink to light blue
+                newGradient = `linear-gradient(to bottom, ${topColor}, ${bottomColor})`;
+                celestial.textContent = '☀️';
+                starsContainer.style.display = 'none';
+            } else if (totalMinutes >= sunriseEnd && totalMinutes < dayEnd) {
+                // Daytime: Bright blue tones
+                const factor = (totalMinutes - sunriseEnd) / (dayEnd - sunriseEnd);
+                const topColor = interpolateColor('#87ceeb', '#4682b4', factor); // Light to medium blue
+                const bottomColor = interpolateColor('#b0e0e6', '#1e90ff', factor); // Cyan to deep blue
+                newGradient = `linear-gradient(to bottom, ${topColor}, ${bottomColor})`;
+                celestial.textContent = '☀️';
+                starsContainer.style.display = 'none';
+            } else if (totalMinutes >= dayEnd && totalMinutes < sunsetEnd) {
+                // Sunset: Reddish, golden, purple
+                const factor = (totalMinutes - dayEnd) / (sunsetEnd - dayEnd);
+                const topColor = interpolateColor('#ffd700', '#ff4500', factor); // Yellow to orange-red
+                const bottomColor = interpolateColor('#ff8c00', '#4b0082', factor); // Orange to indigo
+                newGradient = `linear-gradient(to bottom, ${topColor}, ${bottomColor})`;
+                celestial.textContent = '☀️';
+                starsContainer.style.display = 'none';
+            } else {
+                // Night: Deep blue and indigo
+                const factor = ((totalMinutes < sunriseStart ? totalMinutes + 1440 : totalMinutes) - sunsetEnd) / (sunriseStart + 1440 - sunsetEnd);
+                const topColor = interpolateColor('#191970', '#000033', factor); // Midnight blue to darker blue
+                const bottomColor = interpolateColor('#000080', '#1c2526', factor); // Navy to dark teal
+                newGradient = `linear-gradient(to bottom, ${topColor}, ${bottomColor})`;
+                celestial.textContent = '🌙';
+                starsContainer.style.display = 'block';
+                if (!starsCreated) {
+                    createStars();
+                    starsCreated = true;
+                }
+            }
+
+            // Apply gradient with smooth transition to the BODY
+            document.body.style.transition = 'background 5s ease';
+            document.body.style.background = newGradient;
+
+
+            // Update celestial body position
+            let progress;
+            if (totalMinutes >= sunriseStart && totalMinutes < sunsetEnd) {
+                progress = (totalMinutes - sunriseStart) / (sunsetEnd - sunriseStart);
+            } else {
+                const adjustedMinutes = totalMinutes < sunriseStart ? totalMinutes + 1440 : totalMinutes;
+                progress = (adjustedMinutes - sunsetEnd) / (sunriseStart + 1440 - sunsetEnd);
+            }
+            progress = Math.max(0, Math.min(1, progress));
+
+            const xPos = 5 + progress * 90;
+            const yPos = 90 - 80 * 4 * progress * (1 - progress);
+
+            celestial.style.left = `${xPos}vw`;
+            celestial.style.top = `${yPos}vh`;
+            celestial.style.display = 'block';
         }
-    }
-
-    // Apply gradient with smooth transition to the BODY
-    document.body.style.transition = 'background 5s ease';
-    document.body.style.background = newGradient;
-
-
-    // Update celestial body position
-    let progress;
-    if (totalMinutes >= sunriseStart && totalMinutes < sunsetEnd) {
-        progress = (totalMinutes - sunriseStart) / (sunsetEnd - sunriseStart);
-    } else {
-        const adjustedMinutes = totalMinutes < sunriseStart ? totalMinutes + 1440 : totalMinutes;
-        progress = (adjustedMinutes - sunsetEnd) / (sunriseStart + 1440 - sunsetEnd);
-    }
-    progress = Math.max(0, Math.min(1, progress));
-
-    const xPos = 5 + progress * 90;
-    const yPos = 90 - 80 * 4 * progress * (1 - progress);
-
-    celestial.style.left = `${xPos}vw`;
-    celestial.style.top = `${yPos}vh`;
-    celestial.style.display = 'block';
-}
 
         function updateCountdown() {
             const now = new Date();
