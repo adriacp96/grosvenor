@@ -23,7 +23,10 @@
             padding: 0;
             overflow: hidden;
             touch-action: none;
-            background-color: #191970; /* Color base del gradiente para evitar el flash */
+            /* --- MOVED FROM BODY --- */
+            background: linear-gradient(to bottom, #191970, #000080);
+            background-size: cover;
+            background-attachment: fixed;
             box-sizing: border-box; /* --- ADDED --- */
         }
 
@@ -37,9 +40,8 @@
             
             width: 100%;
             min-height: 100svh; /* --- CHANGED from 100vh --- */
-            background: linear-gradient(to bottom, #191970, #000080);
-            background-size: cover;
-            background-attachment: fixed;
+            /* --- REMOVED BACKGROUND PROPERTIES --- */
+            background-color: transparent; /* --- ADDED --- */
 
             display: flex;
             flex-direction: column;
@@ -519,8 +521,9 @@
                 }
             }
 
-            document.body.style.transition = 'background 5s ease';
-            document.body.style.background = newGradient;
+            /* --- APPLY GRADIENT TO HTML TAG --- */
+            document.documentElement.style.transition = 'background 5s ease';
+            document.documentElement.style.background = newGradient;
 
             let progress;
             if (totalMinutes >= sunriseStart && totalMinutes < sunsetEnd) {
