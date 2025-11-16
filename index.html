@@ -24,6 +24,7 @@
             overflow: hidden;
             touch-action: none;
             background-color: #191970; /* Color base del gradiente para evitar el flash */
+            box-sizing: border-box; /* --- ADDED --- */
         }
 
         body {
@@ -35,7 +36,7 @@
             padding-bottom: env(safe-area-inset-bottom);
             
             width: 100%;
-            min-height: 100vh; /* Asegura que cubra toda la altura visible */
+            min-height: 100svh; /* --- CHANGED from 100vh --- */
             background: linear-gradient(to bottom, #191970, #000080);
             background-size: cover;
             background-attachment: fixed;
