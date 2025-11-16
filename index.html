@@ -17,31 +17,34 @@
         }
 
         html {
-            min-height: 100svh; /* --- CHANGED --- */
+            height: 100%;
             width: 100%;
             margin: 0;
             padding: 0;
             overflow: hidden;
             touch-action: none;
-            /* --- MOVED FROM BODY --- */
+            
+            /* --- FONDO MOVIDO AQUÍ --- */
+            /* Se aplica al <html> para que llene TODA la pantalla, incluyendo el notch */
             background: linear-gradient(to bottom, #191970, #000080);
             background-size: cover;
             background-attachment: fixed;
-            box-sizing: border-box; /* --- ADDED --- */
+            background-color: #191970; /* Fallback por si el gradiente no carga */
         }
 
         body {
             font-family: 'Emirates Bold';
             margin: 0;
             padding: 0;
-            /* Estos paddings son clave para que el contenido respete las áreas seguras, mientras el fondo se extiende */
+            /* Estos paddings son clave para que el contenido respete las áreas seguras */
             padding-top: env(safe-area-inset-top);
             padding-bottom: env(safe-area-inset-bottom);
             
             width: 100%;
-            min-height: 100%; /* --- CHANGED --- */
-            /* --- REMOVED BACKGROUND PROPERTIES --- */
-            background-color: transparent; /* --- ADDED --- */
+            min-height: 100vh; /* Asegura que cubra toda la altura visible */
+            
+            /* --- FONDO ELIMINADO DE AQUÍ --- */
+            /* El body ahora es transparente, mostrando el fondo del <html> */
 
             display: flex;
             flex-direction: column;
@@ -51,7 +54,7 @@
             position: relative;
             overflow: hidden;
             touch-action: none;
-            box-sizing: border-box;
+            box-sizing: border-box; /* Clave para que el padding se incluya en el min-height */
         }
 
         .emirates-logo {
@@ -78,7 +81,7 @@
             z-index: 2;
             position: relative;
             /* --- CAMBIO ADICIONAL CLAVE --- */
-            /* min-height: 100%; */ /* --- REMOVED this line --- */
+            min-height: 100%; /* Asegura que ocupe al menos el 100% del espacio vertical disponible dentro del body */
             display: flex; /* Añadir o asegurar flexbox para centrado y distribución del contenido */
             flex-direction: column;
             justify-content: center;
@@ -521,9 +524,17 @@
                 }
             }
 
-            /* --- APPLY GRADIENT TO HTML TAG --- */
+            /*
+               Esta es la única función que cambia el fondo.
+               Ahora, en lugar de cambiar 'document.body.style.background',
+               cambiamos 'document.documentElement.style.background' (documentElement es el tag <html>).
+            */
             document.documentElement.style.transition = 'background 5s ease';
             document.documentElement.style.background = newGradient;
+            
+            // Forzamos al <html> a mantener el 'background-attachment: fixed' si JS lo sobrescribe
+            document.documentElement.style.backgroundAttachment = 'fixed';
+
 
             let progress;
             if (totalMinutes >= sunriseStart && totalMinutes < sunsetEnd) {
